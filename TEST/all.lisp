@@ -4,7 +4,8 @@
 
 (defparameter *test-list* (list "define"
 				"tree"
-				"move"))
+				"move"
+				"board"))
 
 (defparameter *result-list* nil)
 

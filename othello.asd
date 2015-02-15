@@ -9,5 +9,6 @@
   :author "eshamster <hamgoostar@gmail.com>"
   :components ((:file "define")
 	       (:file "tree")
-	       (:file "move"))
+	       (:file "move")
+	       (:file "board"))
   :serial t)
