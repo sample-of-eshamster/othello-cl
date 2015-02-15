@@ -2,7 +2,9 @@
 
 (defparameter *reporter* :dot)
 
-(defparameter *test-list* (list "define"))
+(defparameter *test-list* (list "define"
+				"tree"
+				"move"))
 
 (defparameter *result-list* nil)
 

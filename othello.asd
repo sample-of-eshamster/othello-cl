@@ -7,5 +7,7 @@
   :description "lisp othello written for learning common lisp"
   :version "0.0.1"
   :author "eshamster <hamgoostar@gmail.com>"
-  :components ((:file "define"))
+  :components ((:file "define")
+	       (:file "tree")
+	       (:file "move"))
   :serial t)
