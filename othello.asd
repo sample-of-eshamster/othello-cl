@@ -10,5 +10,6 @@
   :components ((:file "define")
 	       (:file "tree")
 	       (:file "move")
-	       (:file "board"))
+	       (:file "board")
+	       (:file "game"))
   :serial t)
