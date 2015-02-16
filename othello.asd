@@ -13,5 +13,7 @@
 	       (:file "board")
 	       (:file "game")
 	       (:file "eval-board")
-	       (:file "minimax"))
+	       (:file "minimax")
+	       (:file "random-move")
+	       (:file "mc"))
   :serial t)

@@ -8,7 +8,9 @@
 				"board"
 				"game"
 				"eval-board"
-				"minimax"))
+				"minimax"
+				"random-move"
+				"mc"))
 
 (defparameter *result-list* nil)
 
