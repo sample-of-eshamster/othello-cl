@@ -12,5 +12,6 @@
 	       (:file "move")
 	       (:file "board")
 	       (:file "game")
-	       (:file "eval-board"))
+	       (:file "eval-board")
+	       (:file "minimax"))
   :serial t)
