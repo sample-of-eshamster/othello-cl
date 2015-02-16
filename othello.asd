@@ -11,5 +11,6 @@
 	       (:file "tree")
 	       (:file "move")
 	       (:file "board")
-	       (:file "game"))
+	       (:file "game")
+	       (:file "eval-board"))
   :serial t)

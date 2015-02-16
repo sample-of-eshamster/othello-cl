@@ -6,7 +6,8 @@
 				"tree"
 				"move"
 				"board"
-				"game"))
+				"game"
+				"eval-board"))
 
 (defparameter *result-list* nil)
 
