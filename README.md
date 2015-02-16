@@ -1,2 +1,2 @@
 # outline
-- This project is created only for learning common lisp.
+- This project is written for learning common lisp.
