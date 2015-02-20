@@ -1,5 +1,5 @@
-(defun get-node-value (node)
-  (car node))
+(defmacro get-node-value (node)
+  `(car ,node))
 
 (defun get-children (node)
   (cdr node))

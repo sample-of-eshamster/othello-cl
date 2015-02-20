@@ -16,5 +16,6 @@
 	       (:file "minimax")
 	       (:file "random-move")
 	       (:file "mc")
+	       (:file "uct")
 	       (:file "player"))
   :serial t)
