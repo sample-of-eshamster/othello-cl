@@ -10,7 +10,8 @@
 				"eval-board"
 				"minimax"
 				"random-move"
-				"mc"))
+				"mc"
+				"uct"))
 
 (defparameter *result-list* nil)
 

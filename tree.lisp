@@ -4,6 +4,9 @@
 (defun get-children (node)
   (cdr node))
 
+(defmacro get-nth-child (n node)
+  `(nth ,n (get-children ,node)))
+
 (defun has-children (node)
   (not (null (get-children node))))
 
@@ -19,7 +22,7 @@
   (if (not (has-children parent))
       (return-from select-max-child nil))
   (select-max-node #'(lambda (node)
-		       (funcall fn-calc-value (car node)))
+		       (funcall fn-calc-value (get-node-value node)))
 		   (get-children parent)))
 
 (defun select-max-node (fn-calc-value nodes)

@@ -27,7 +27,14 @@
   (prove:is (get-node-value *test-tree*) 1)
   
   (prove:is (get-children *test-tree*) '((2) (3)))
-  (prove:is (get-children '(1)) nil))
+  (prove:is (get-children '(1)) nil)
+
+  (prove:is (get-nth-child 0 *test-tree*) '(2))
+  (prove:is (get-nth-child 1 *test-tree*) '(3))
+  (prove:is (get-nth-child 2 *test-tree*) nil)
+  (setf (car (get-nth-child 1 *test-tree*)) 5)
+  (prove:is (get-nth-child 1 *test-tree*) '(5))
+  )
 
 (prove:subtest "Test select max funcs"
   (prove:is (select-max-child #'(lambda(val) (* val -1)) *test-tree*) '(2))

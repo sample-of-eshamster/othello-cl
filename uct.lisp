@@ -33,3 +33,13 @@
       (setf (uct-node-unexpanded-moves node) (cdr moves))
       (add-child tree (make-a-uct-node move)))))
     
+(defun select-uct-child (parent now-turn ucb-coef)
+  (if (not (has-children parent))
+      (return-from select-uct-child nil))
+  (select-max-child (lambda (node)
+		      (calc-ucb (uct-node-sum node)
+				(uct-node-num node)
+				(uct-node-num (get-node-value parent))
+				:coef  ucb-coef
+				:turn now-turn))
+		    parent))

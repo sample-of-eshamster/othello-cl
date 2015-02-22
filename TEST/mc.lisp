@@ -18,6 +18,11 @@
 	       (calc-ucb 2 1 2)))
   (prove:ok (< (calc-ucb 2 2 2)
 	       (calc-ucb 2 2 4)))
+  
+  (prove:is (* (calc-ucb -2 10 10 :turn *white*) -1)
+	    (calc-ucb -2 10 10 :turn *black*))
+  (prove:is (calc-ucb -2 0 10 :turn *white*)
+	    (calc-ucb -2 0 10 :turn *black*))
 
   (within (calc-ucb 2 2 8) 2.4420 0.0001)
   (within (calc-ucb -2 2 8) 0.4420 0.0001))
