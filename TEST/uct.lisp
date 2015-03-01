@@ -7,10 +7,11 @@
   (prove:ok (uct-node-p (car (make-a-uct-node (make-a-move 3 4))))))
 
 (defun make-expanded-node (game visit-times intv)
-  (let ((tree (make-a-uct-node nil)))
+  (let ((tree (make-a-uct-node nil))
+	(param (make-uct-param :expand-intv intv)))
     (dotimes (x visit-times)
       (setf (uct-node-num (get-node-value tree)) (+ x 1))
-      (setf tree (expand-child-if-needed game tree intv)))
+      (setf tree (expand-child-if-needed game tree param)))
     tree))
   
 (prove:subtest "Test expand-child-if-needed"
@@ -55,17 +56,29 @@
 		   (incf count 1))
 		 ;; test if the node that have not been visited is selected
 		 (setf (uct-node-num (car (get-nth-child target tree))) 0)
-		 (prove:is (select-uct-child tree (game-turn game) ucb-coef)
+		 (prove:is (select-uct-child game tree *def-uct-param*)
 			   (get-nth-child target tree)
 			   :test #'equalp)
       
 		 ;; test if the max uct node is selected
 		 (setf (uct-node-num (car (get-nth-child target tree))) (+ target 1))
 		 (test-multf (uct-node-sum (car (get-nth-child target tree))) -1)
-		 (prove:is (select-uct-child tree (game-turn game) ucb-coef)
+		 (prove:is (select-uct-child game tree *def-uct-param*)
 			   (get-nth-child target tree)
 			   :test #'equalp))))
       (test-select-uct-child 4 *white*)
       (test-select-uct-child 5 *black*))))
+
+(prove:subtest "Test reflect-sim-result"
+  (let ((tree (make-a-uct-node nil))
+	(game (init-game))
+	(uct-param (make-def-uct-param)))
+    (prove:is (reflect-sim-result game tree uct-param -1) -1)
+    (prove:is (uct-node-num (get-node-value tree)) 1)
+    (prove:is (uct-node-sum (get-node-value tree)) -1)
+    
+    (prove:is (reflect-sim-result game tree uct-param 9) 9)
+    (prove:is (uct-node-num (get-node-value tree)) 2)
+    (prove:is (uct-node-sum (get-node-value tree)) 8)))
 
 (prove:finalize)
