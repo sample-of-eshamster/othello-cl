@@ -29,8 +29,8 @@
 
 
 (defparameter *end-status-list* `(,*white* ,*black* ,*empty*))
-(defmacro prove-game-is-end (game)
-  `(prove-in (get-game-result ,game) ',*end-status-list*))
+(defun prove-game-is-end (game)
+  (prove-in (get-game-result game) *end-status-list*))
 (prove:subtest "Test sim-to-game-end"
   (prove-game-is-end (sim-to-game-end (init-game) #'make-uniform-policy))
   (prove-game-is-end (sim-to-game-end (make-nth-test-game 3) #'make-uniform-policy))
