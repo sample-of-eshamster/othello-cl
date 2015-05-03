@@ -20,8 +20,9 @@
 
 (defun calc-ucb (sum num total-num &key (coef 1.41421356) (turn *white*))
   (if (and (< 0 num) (< 0 total-num))
-      (* (+ (/ sum num) (* coef (sqrt (/ (log total-num) num))))
-	 (if (= turn *white*) 1 -1))
+      (+ (* (/ sum num)
+	    (if (= turn *white*) 1 -1))
+	 (* coef (sqrt (/ (log total-num) num))))
       99999))
 
 (defun init-mc-nodes (game)
