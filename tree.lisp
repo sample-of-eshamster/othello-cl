@@ -1,3 +1,4 @@
+
 (defmacro get-node-value (node)
   `(car ,node))
 
@@ -16,12 +17,23 @@
 (defun has-children (node)
   (not (null (get-children node))))
 
+(defun add-or-insert-child (parent destructive children)
+  (labels ((add-or-insert (lst1 lst2)
+	     (if destructive (nconc lst1 lst2) (append lst1 lst2))))
+    (add-or-insert
+     parent
+     (mapcar (lambda (child)
+	       (if (and (not (null child)) (listp child) (listp (cdr child)))
+		   `,child
+		   `(,child))) children))))
+ 
+; not destructive 
 (defun add-child (parent &rest children)
-  (append parent
-	  (mapcar (lambda (child)
-		    (if (and (not (null child)) (listp child) (listp (cdr child)))
-			`,child
-			`(,child))) children)))
+  (add-or-insert-child parent nil children))
+
+; destructive
+(defun insert-child (parent &rest children)
+  (add-or-insert-child parent t children))
 
 (defun get-num-children (node)
   (- (length node) 1))
@@ -43,6 +55,21 @@
 		 (setf depth (max depth (+ (f child) 1))))
 	       depth)))
     (f tree)))
+
+(defun print-tree (tree &key (max-depth -1) (f-proc-value #'(lambda (v) v)))
+  (labels ((print-str-seq (s n)
+	     (dotimes (i n) (princ s)))
+	   (f (node depth)
+	     (if (or (null node)
+		     (and (>= max-depth 0) (> depth max-depth)))
+		 (return-from f))
+	     (print-str-seq "| " depth)
+	     (princ (funcall f-proc-value (get-node-value node)))
+	     (fresh-line)
+	     (do-children (child node)
+	       (f child (+ depth 1)))))
+    (f tree 0)))
+	     
 
 (defun select-max-child (fn-calc-value parent)
   (if (not (has-children parent))

@@ -1,13 +1,27 @@
 (prove:plan 6)
 
-(prove:subtest "Test add-child"
-  (prove:is (add-child '(1) 2) '(1 (2)))
-  (prove:is (add-child '(1) 2 3) '(1 (2) (3)))
-  (prove:is (add-child '(1) '(2)) '(1 (2)))
-  (prove:is (add-child '(1 (2)) '3) '(1 (2) (3)))
-  (prove:is (add-child '(1) (add-child '(2) 3)) '(1 (2 (3))))
-  (prove:is (add-child '(1) nil) '(1 (nil)))
-  (prove:is (add-child '(1) `(,nil)) '(1 (nil))))
+(prove:subtest
+ "Test add-child"
+ (prove:subtest
+  "Test result"
+  (defun test (f)
+    (prove:is (funcall f '(1) 2) '(1 (2)))
+    (prove:is (funcall f '(1) 2 3) '(1 (2) (3)))
+    (prove:is (funcall f '(1) '(2)) '(1 (2)))
+    (prove:is (funcall f '(1 (2)) '3) '(1 (2) (3)))
+    (prove:is (funcall f '(1) (funcall f '(2) 3)) '(1 (2 (3))))
+    (prove:is (funcall f '(1) nil) '(1 (nil)))
+    (prove:is (funcall f '(1) `(,nil)) '(1 (nil))))
+  (test #'add-child)
+  (test #'insert-child))
+ (prove:subtest
+  "Test destructiveness"
+  (defparameter *test-tree* '(1))
+  (add-child *test-tree* 2)
+  (prove:is *test-tree* '(1))
+  (insert-child *test-tree* 2)
+  (prove:is *test-tree* '(1 (2)))))
+
 
 (prove:subtest
  "Test do-children"
