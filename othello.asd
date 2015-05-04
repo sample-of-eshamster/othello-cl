@@ -8,6 +8,7 @@
   :version "0.0.1"
   :author "eshamster <hamgoostar@gmail.com>"
   :components ((:file "define")
+	       (:file "utils")
 	       (:file "tree")
 	       (:file "move")
 	       (:file "board")

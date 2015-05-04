@@ -3,6 +3,7 @@
 (defparameter *reporter* :dot)
 
 (defparameter *test-list* (list "define"
+				"utils"
 				"tree"
 				"move"
 				"board"
