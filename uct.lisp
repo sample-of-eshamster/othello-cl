@@ -25,7 +25,7 @@
   
 (defparameter *def-uct-param* (make-def-uct-param))
 
-; This function is destructive about "unexpanded-moves"
+; This function is destructive
 (defun expand-child-if-needed (game tree uct-param)
   (let* ((node (get-node-value tree))
 	 (moves (uct-node-unexpanded-moves node))
@@ -39,7 +39,7 @@
 	      (neq (mod (uct-node-num node) expand-intv) (- expand-intv 1)))
 	  (return-from expand-child-if-needed tree))
       (setf (uct-node-unexpanded-moves node) (cdr moves))
-      (add-child tree (make-a-uct-node move)))))
+      (insert-child tree (make-a-uct-node move)))))
     
 (defun select-uct-child (game parent uct-param)
   (if (not (has-children parent))
@@ -57,4 +57,24 @@
 (defun reflect-sim-result (game uct-tree uct-param result)
   (incf (uct-node-sum (get-node-value uct-tree)) result)
   (incf (uct-node-num (get-node-value uct-tree)))
-  result)
+  (values result uct-tree))
+
+(defun mcts-simulate-once (game tree param &key
+					     (fn-select #'select-uct-child)
+					     (fn-expand #'expand-child-if-needed)
+					     (fn-simulate #'mc-simulate-once)
+					     (fn-backprop #'reflect-sim-result))
+  (labels ((sim-once (node)
+	     (funcall fn-expand game node param)
+	     (let ((child-tree (funcall fn-select game node param)))
+	       (funcall fn-backprop
+			game
+			node
+			param
+			(if (null child-tree)
+			    (funcall fn-simulate game (uct-param-fn-make-policy param))
+			    (do-in-move-reverse
+				game
+				(uct-node-move-from-parent (get-node-value child-tree))
+			      (sim-once child-tree)))))))
+    (cadr (multiple-value-list (sim-once tree)))))
