@@ -1,4 +1,4 @@
-(prove:plan 8)
+(prove:plan 7)
 
 (load "TEST/test-util.lisp")
 
@@ -53,13 +53,11 @@
     (labels ((test-select-uct-child (game-progress)
 	       (let* ((game (make-nth-test-game game-progress))
 		      (turn (game-turn game))
-		      (tree (make-expanded-node game 20 1))
-		      (count 0))
+		      (tree (make-expanded-node game 20 1)))
 		 (do-children (child-tree tree)
 		   (setf (uct-node-num (car child-tree)) 10)
 		   (setf (uct-node-sum (car child-tree))
-			 (* 10 (if (= turn *white*) -1 1)))
-		   (incf count 1))
+			 (* 10 (if (= turn *white*) -1 1))))
 		 (prove:subtest
 		  "test if the node that have not been visited is selected"
 		  (setf (uct-node-num (t-nth-uct-val target tree)) 0)
@@ -82,6 +80,35 @@
 			    :test #'equalp)))))
       (test-select-uct-child 4)
       (test-select-uct-child 5))))
+
+(prove:subtest
+ "Test select-uct-node-by-ave"
+ (let* ((game (make-nth-test-game 4))
+	(tree (make-expanded-node game 20 1))
+	(child-num (get-num-children tree))
+	(count 1))
+   (assert (> child-num 2))
+   
+   (do-children (child tree)
+     (setf (uct-node-num (get-node-value child)) 10)
+     (setf (uct-node-sum (get-node-value child)) count)
+     (incf count 1))
+
+   (labels ((prove-select (turn target-idx)
+	      (prove:is (select-uct-node-by-ave turn tree)
+			(get-nth-child target-idx tree)
+			:test #'equalp)))
+     (prove:subtest
+      "Test if the max node is selected"
+      (prove-select *white* (- child-num 1))
+      (prove-select *black* 0))
+   
+     (prove:subtest
+      "Test if the node that have not been visited is not selected"
+      (setf (uct-node-num (t-nth-uct-val (- child-num 1) tree)) 0)
+      (prove-select *white* (- child-num 2))
+      (setf (uct-node-num (t-nth-uct-val 0 tree)) 0)
+      (prove-select *black* 1)))))
 
 (prove:subtest
  "Test reflect-sim-result"
@@ -112,5 +139,15 @@
 			       (format nil "num: ~A, sum: ~A"
 				       (uct-node-num node)
 				       (uct-node-sum node)))))
+
+(prove:subtest
+ "Test uct-simulate"
+ (labels ((test-simulate (start-depth times)
+	    (let* ((game (make-nth-test-game start-depth))
+		   (move (uct-simulate game (make-def-uct-param) times)))
+	      (prove:ok (check-move-valid (game-board game) (car move) (cdr move) (game-turn game))))))
+   (test-simulate 12 50)
+   (test-simulate 13 50)))
+	      
 
 (prove:finalize)

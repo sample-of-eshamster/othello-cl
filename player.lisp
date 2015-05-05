@@ -48,3 +48,9 @@
       (return-from move-by-uniform-mc))
   (let ((move (mc-simulate game #'make-uniform-policy times)))
     (move-game game (car move) (cdr move))))
+
+(defun move-by-default-uct(game times)
+  (if (is-game-end game)
+      (return-from move-by-default-uct))
+  (let ((move (uct-simulate game (make-def-uct-param) times)))
+    (move-game game (car move) (cdr move))))

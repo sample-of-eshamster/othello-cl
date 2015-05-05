@@ -78,3 +78,20 @@
 				(uct-node-move-from-parent (get-node-value child-tree))
 			      (sim-once child-tree)))))))
     (cadr (multiple-value-list (sim-once tree)))))
+
+(defun select-uct-node-by-ave (turn uct-tree)
+  (select-max-child #'(lambda (node)
+			(let ((num (uct-node-num node))
+			      (sum (uct-node-sum node)))
+			  (if (> num 0)
+			      (* (/ sum num) (if (= turn *white*) 1 -1))
+			      -99999)))
+		    uct-tree))
+		    
+(defun uct-simulate (game param times)
+  (let ((uct-tree (make-a-uct-node nil)))
+    (dotimes (i times)
+      (mcts-simulate-once game uct-tree param))
+    (uct-node-move-from-parent
+     (get-node-value (select-uct-node-by-ave (game-turn game) uct-tree)))))
+			    
