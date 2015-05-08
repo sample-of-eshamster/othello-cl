@@ -12,7 +12,8 @@
 				"minimax"
 				"random-move"
 				"mc"
-				"uct"))
+				"uct"
+				"human"))
 
 (defparameter *result-list* nil)
 

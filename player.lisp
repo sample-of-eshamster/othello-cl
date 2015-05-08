@@ -1,27 +1,5 @@
 ; --------- human --------- ;
 
-(defun read-command ()
-  (let ((line (read-line))
-	(result nil))
-    (with-input-from-string (s line)
-      (labels ((add-to-list ()
-		 (let ((value (read s nil)))
-		   (if (null value) (return-from add-to-list))
-		   (setf result (cons value result))
-		   (add-to-list))))
-	(add-to-list)))
-    (reverse result)))
-
-(defun eval-play-command (game com-list)
-  (case (car com-list)
-    (print (print-game game) nil)
-    (reverse (reverse-game game))
-    (move (if (eq 2 (length (cdr com-list)))
-	       (move-game game (cadr com-list) (caddr com-list))
-	       nil))
-    (t (princ "This command is not defined.")
-       nil)))
-
 (defun move-by-human(game)
   (print-game game nil)
   (if (is-game-end game)
