@@ -20,7 +20,8 @@
 	       (let* ((depth 4)
 		      (game (make-nth-test-game start-depth))
 		      (first-game-depth (get-game-depth game))
-		      (eval-tree (eval-game-by-minimax game depth t)))
+		      (eval-tree (eval-game-by-minimax game depth
+						       :is-all-tree t)))
 		 (prove-selection game eval-tree)
 		 (prove:is (get-tree-depth eval-tree) depth)
 		 (prove:is (get-game-depth game) first-game-depth)
@@ -36,9 +37,29 @@
       "Check near the game end"
     (let* ((depth 6)
 	   (game (make-nth-test-game 58))
-	   (eval-tree (eval-game-by-minimax game depth t)))
+	   (eval-tree (eval-game-by-minimax game depth
+					    :is-all-tree t)))
       (assert (not (is-game-end game)))
       (prove:ok (< (get-tree-depth eval-tree) depth)))))
+
+(prove:subtest
+    "Test eval-game-by-ab"
+  (prove:subtest
+      "Check if the result is same as the one of eval-game-by-minimax"
+    (labels ((get-score (node)
+	       (minimax-node-score (get-node-value node)))
+	     (test (game depth)
+	       (let ((eval-tree-a (eval-game-by-minimax game depth :is-all-tree t))
+		     (eval-tree-b (eval-game-by-ab game depth :is-all-tree t)))
+		 (prove:is (get-score eval-tree-a) (get-score eval-tree-b))
+		 (prove:ok (> (get-tree-size eval-tree-a)
+			      (get-tree-size eval-tree-b))))))
+      (dolist (start-depth '(8 13))
+	(let ((game (make-nth-test-game start-depth)))
+	  (test game 4)
+	  (dolist (move (make-moves game))
+	    (do-in-move-reverse game move
+	      (test game 2))))))))
 
 (prove:subtest
     "Test select-move-by-minimax"
@@ -50,6 +71,7 @@
 		   (prove:ok (check-move-valid (game-board game)
 					       (car move) (cdr move)
 					       (game-turn game))))))))
-    (test-func #'eval-game-by-minimax)))
+    (test-func #'eval-game-by-minimax)
+    (test-func #'eval-game-by-ab)))
 
 (prove:finalize)
