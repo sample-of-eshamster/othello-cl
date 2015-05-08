@@ -33,7 +33,7 @@
 (defun move-by-minimax(game depth)
   (if (is-game-end game)
       (return-from move-by-minimax))
-  (let ((move (select-move-by-minimax game depth #'eval-game-by-minimax)))
+  (let ((move (select-move-by-minimax game depth #'eval-game-by-ab)))
     (move-game game (car move) (cdr move))))
 
 ; --------- random --------- ;
