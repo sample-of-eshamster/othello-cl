@@ -5,7 +5,7 @@
   (if (is-game-end game)
       (progn (print "This game has ended")
 	     (return-from move-by-human))
-  (loop while (not (eval-play-command game (read-command))))))
+      (loop while (not (eval-play-command game (stream-to-list))))))
 
 ; --------- minimax --------- ;
 (defun move-by-minimax(game depth)

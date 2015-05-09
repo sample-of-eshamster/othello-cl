@@ -1,4 +1,11 @@
-(prove:plan 1)
+(prove:plan 2)
+
+(prove:subtest
+    "Test stream-to-list"
+  (labels ((test (com list)
+	     (prove:is (stream-to-list (make-string-input-stream com)) list)))
+    (test "test" '(TEST))
+    (test "thIs is a Test" '(THIS IS A TEST))))
 
 (prove:subtest
  "Test lazy evaluation"

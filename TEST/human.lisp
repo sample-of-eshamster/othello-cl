@@ -1,13 +1,6 @@
-(prove:plan 2)
+(prove:plan 1)
 
 (load "TEST/test-util.lisp")
-
-(prove:subtest
-    "Test read-command"
-  (labels ((test (com list)
-	     (prove:is (read-command (make-string-input-stream com)) list)))
-    (test "test" '(TEST))
-    (test "thIs is a Test" '(THIS IS A TEST))))
 
 (prove:subtest
     "Test eval-play-command"

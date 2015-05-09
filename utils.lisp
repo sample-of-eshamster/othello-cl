@@ -1,3 +1,17 @@
+(defun stream-to-list (&optional (stream *standard-input*))
+  (let ((line (read-line stream))
+	(result nil))
+    (with-input-from-string (s line)
+      (labels ((add-to-list ()
+		 (let ((value (read s nil)))
+		   (if (null value) (return-from add-to-list))
+		   (setf result (cons value result))
+		   (add-to-list))))
+	(add-to-list)))
+    (reverse result)))
+
+; ---- Lazy library ---- ;
+
 (defmacro lazy (&body body)
   (let ((value (gensym))
 	(evaluated (gensym)))
