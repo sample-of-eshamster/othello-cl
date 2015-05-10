@@ -1,4 +1,9 @@
-(prove:plan 2)
+(prove:plan 3)
+
+(prove:subtest
+    "Test string-to-list"
+  (prove:is (string-to-list "test") '(TEST))
+  (prove:is (string-to-list "ThiS is a test") '(THIS IS A TEST)))
 
 (prove:subtest
     "Test stream-to-list"

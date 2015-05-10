@@ -1,6 +1,5 @@
-(defun stream-to-list (&optional (stream *standard-input*))
-  (let ((line (read-line stream))
-	(result nil))
+(defun string-to-list (line)
+  (let ((result nil))
     (with-input-from-string (s line)
       (labels ((add-to-list ()
 		 (let ((value (read s nil)))
@@ -9,6 +8,9 @@
 		   (add-to-list))))
 	(add-to-list)))
     (reverse result)))
+
+(defun stream-to-list (&optional (stream *standard-input*))
+  (string-to-list (read-line stream)))
 
 ; ---- Lazy library ---- ;
 
