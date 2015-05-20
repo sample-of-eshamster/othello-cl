@@ -1,4 +1,30 @@
-(prove:plan 1)
+(prove:plan 4)
+
+(prove:subtest
+    "Test string-to-list"
+  (prove:is (string-to-list "test") '(TEST))
+  (prove:is (string-to-list "ThiS is a test") '(THIS IS A TEST)))
+
+(prove:subtest
+    "Test stream-to-list"
+  (labels ((test (com list)
+	     (prove:is (stream-to-list (make-string-input-stream com)) list)))
+    (test "test" '(TEST))
+    (test "thIs is a Test" '(THIS IS A TEST))))
+
+(prove:subtest
+    "Test to-string"
+  (prove:is (to-string "test") "test")
+  (prove:is (to-string 123) "123")
+  (prove:is (to-string #'+) "+")
+  (prove:is (to-string 'test) "TEST"))
+
+(prove:subtest
+    "Test concat-symbol"
+  (prove:is (concat-symbol) nil)
+  (prove:is (concat-symbol 'abc) 'abc)
+  (prove:is (concat-symbol 'abc- 'def) 'abc-def)
+  (prove:is (concat-symbol 'abc- 'def 'gh) 'abc-defgh))
 
 (prove:subtest
  "Test lazy evaluation"

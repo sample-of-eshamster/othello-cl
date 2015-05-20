@@ -1,3 +1,32 @@
+(defun string-to-list (line)
+  (let ((result nil))
+    (with-input-from-string (s line)
+      (labels ((add-to-list ()
+		 (let ((value (read s nil)))
+		   (if (null value) (return-from add-to-list))
+		   (setf result (cons value result))
+		   (add-to-list))))
+	(add-to-list)))
+    (reverse result)))
+
+(defun stream-to-list (&optional (stream *standard-input*))
+  (string-to-list (read-line stream)))
+
+(defmethod to-string ((target string)) target)
+(defmethod to-string ((target number)) (format nil "~D" target))
+(defmethod to-string ((target function)) (symbol-name (function-name target)))
+(defmethod to-string ((target symbol)) (symbol-name target))
+
+(defun concat-symbol (&rest symbols)
+  (if (= (length symbols) 0)
+      (return-from concat-symbol nil))
+  (let ((str ""))
+    (dolist (x symbols)
+      (setf str (concatenate 'string str (symbol-name x))))
+    (intern str)))
+
+; ---- Lazy library ---- ;
+
 (defmacro lazy (&body body)
   (let ((value (gensym))
 	(evaluated (gensym)))
