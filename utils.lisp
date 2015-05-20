@@ -12,6 +12,19 @@
 (defun stream-to-list (&optional (stream *standard-input*))
   (string-to-list (read-line stream)))
 
+(defmethod to-string ((target string)) target)
+(defmethod to-string ((target number)) (format nil "~D" target))
+(defmethod to-string ((target function)) (symbol-name (function-name target)))
+(defmethod to-string ((target symbol)) (symbol-name target))
+
+(defun concat-symbol (&rest symbols)
+  (if (= (length symbols) 0)
+      (return-from concat-symbol nil))
+  (let ((str ""))
+    (dolist (x symbols)
+      (setf str (concatenate 'string str (symbol-name x))))
+    (intern str)))
+
 ; ---- Lazy library ---- ;
 
 (defmacro lazy (&body body)

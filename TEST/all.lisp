@@ -13,7 +13,8 @@
 				"random-move"
 				"mc"
 				"uct"
-				"human"))
+				"human"
+				"player"))
 
 (defparameter *result-list* nil)
 
