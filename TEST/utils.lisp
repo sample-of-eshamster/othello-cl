@@ -1,4 +1,4 @@
-(prove:plan 4)
+(prove:plan 6)
 
 (prove:subtest
     "Test string-to-list"
@@ -25,6 +25,17 @@
   (prove:is (concat-symbol 'abc) 'abc)
   (prove:is (concat-symbol 'abc- 'def) 'abc-def)
   (prove:is (concat-symbol 'abc- 'def 'gh) 'abc-defgh))
+
+(prove:subtest
+    "Test push-without-dup"
+  (prove:is (push-without-dup 3 '(1 2) #'=) '(1 2 3))
+  (prove:is (push-without-dup 1 '(1 2) #'=) '(1 2))
+  (prove:is (push-without-dup '(3 6) '((1 2) (2 4))
+			      #'(lambda (a b) (= (car a) (car b))))
+	    '((1 2) (2 4) (3 6)))
+  (prove:is (push-without-dup '(2 6) '((1 2) (2 4) (2 5) (3 6))
+			      #'(lambda (a b) (= (car a) (car b))))
+	    '((1 2) (2 6) (2 5) (3 6))))
 
 (prove:subtest
  "Test lazy evaluation"
