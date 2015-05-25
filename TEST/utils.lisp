@@ -38,6 +38,14 @@
 	    '((1 2) (2 6) (2 5) (3 6))))
 
 (prove:subtest
+    "Test read-line-while"
+  (prove:is (read-line-while "test"
+			     #'(lambda (str)
+				 (not (equal str "test")))
+			     (make-string-input-stream
+			      (format nil "   ~%abc~%~%  test "))) "test"))
+
+(prove:subtest
  "Test lazy evaluation"
  
  (prove:subtest
