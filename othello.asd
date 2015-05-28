@@ -3,6 +3,8 @@
 
 ; (in-package :othello-asd)
 
+(ql:quickload :cl-ppcre)
+
 (defsystem "othello"
   :description "lisp othello written for learning common lisp"
   :version "0.0.1"
