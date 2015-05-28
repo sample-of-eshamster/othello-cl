@@ -42,9 +42,11 @@
     (reverse (f target lst nil))))
 
 (defun read-line-while (description fn-loop-cond &optional (stream *standard-input*))
-  (do ((str "" (string-trim " " (read-line stream))))
-      ((not (funcall fn-loop-cond str)) str)
-    (format t "~D> " description)))
+  (labels ((my-read-line ()
+	     (string-trim " " (read-line stream))))
+    (do ((str (my-read-line) (my-read-line)))
+	((not (funcall fn-loop-cond str)) str)
+      (format t "~D> " description))))
 
 ; ---- Lazy library ---- ;
 

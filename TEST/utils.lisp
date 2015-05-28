@@ -1,4 +1,4 @@
-(prove:plan 6)
+(prove:plan 7)
 
 (prove:subtest
     "Test string-to-list"
