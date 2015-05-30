@@ -34,11 +34,25 @@
   (when (equalp name "")
     (princ "Please input the name to delete")
     (return-from com-remove-player (values player-list nil)))
-  (let ((found (find-if #'(lambda (plyr) (equalp (player-name plyr) name)) player-list)))
+  (let ((found (find-player-by-name name player-list)))
     (when (null found)
       (format t "The name '~D' is not found~%" name)
       (return-from com-remove-player (values player-list nil)))
     (values (remove found player-list) t)))
+
+(defun com-add-player (plyr plyr-list &optional (stream *standard-input*))
+  (if (null plyr)
+      (return-from com-add-player plyr-list))
+  (when (find-player-by-name (player-name plyr) plyr-list)
+    (unless (equalp
+	     (read-line-while "The name is already exist. Do you overwrite it? [y/n]"
+			      #'(lambda (str) (not (or (equalp str "y")
+						       (equalp str "n"))))
+			      stream)
+	     "y")
+      (return-from com-add-player plyr-list)))
+  (com-modify-player plyr stream)
+  (push-without-dup plyr plyr-list #'(lambda (a b) (equalp (player-name a) (player-name b)))))
 
 (defun com-init-player (&optional (stream *standard-input*))
   (let* ((name (read-line-while "name"

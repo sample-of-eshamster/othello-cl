@@ -83,6 +83,33 @@
       (prove:is (type-of plyr) 'mc-player)))
 
   (prove:subtest
+      "Test add-player"
+    (let* ((plyr-list (t-make-player-list))
+	   (first-len (length plyr-list)))
+      (labels ((test (test-title plyr format-str expected-len expected-match)
+		 (prove:subtest
+		     test-title
+		   (let ((name (player-name plyr))
+			 (new-lst (com-add-player plyr plyr-list
+						  (make-string-input-stream
+						   (format nil format-str)))))
+		     (prove:is (length new-lst) expected-len)
+		     (prove:ok (not (null (find-player-by-name name new-lst))))
+		     (prove:is (equalp (find-player-by-name name new-lst)
+				       (find-player-by-name name plyr-list))
+			       expected-match))
+		   (prove:is (length plyr-list) first-len))))
+	(test "Add new player"
+	      (construct-player "new-name" 'human)
+	      "" (1+ first-len) nil)
+	(test "Overwrite an existing player"
+	      (construct-player "test2" 'human)
+	      "y" first-len nil)
+	(test "Don't overwrite an existeng player"
+	      (construct-player "test2" 'human)
+	      "n" first-len t))))
+
+  (prove:subtest
       "Test modify-player (test only default value)"
     (labels ((test (kind)
 	       (let ((plyr (construct-player "test" kind))
