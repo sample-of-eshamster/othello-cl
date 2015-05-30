@@ -63,7 +63,9 @@
     (unless exists
       (error (format t "The key (~A) is not exists" key)))
     (setf (gethash key (player-params target)) (fit-type-to old-value value))))
-  
+
+(defun find-player-by-name (name lst)
+  (find-if #'(lambda (plyr) (equalp name (player-name plyr))) lst))
 
 ; --------- human --------- ;
 

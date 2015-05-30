@@ -1,4 +1,4 @@
-(prove:plan 4)
+(prove:plan 5)
 
 (load "TEST/test-util.lisp")
 
@@ -68,6 +68,15 @@
 		    (format nil "print~%move ~D ~D" (car move) (cdr move)))))
     (dolist (kind (remove 'human *all-player-kind*))
       (test kind))))
-	       
+
+(prove:subtest
+    "Test find-player-by-name"
+  (let* ((found (construct-player "test" 'mc))
+	 (lst (list (construct-player "abcd" 'human)
+		    found
+		    (construct-player "xyz" 'uct))))
+    (prove:is (find-player-by-name "test" lst) found :test #'equalp)
+    (prove:isnt (find-player-by-name "abcd" lst) found :test #'equalp)
+    (prove:ok (null (find-player-by-name "not-found" lst)))))
 
 (prove:finalize)
