@@ -43,10 +43,13 @@
 
 (defun read-line-while (description fn-loop-cond &optional (stream *standard-input*))
   (labels ((my-read-line ()
-	     (string-trim " " (read-line stream))))
+	     (string-trim " " (read-line stream)))
+	   (print-prefix ()
+	     (format t "~D> " description)))
+    (print-prefix)
     (do ((str (my-read-line) (my-read-line)))
 	((not (funcall fn-loop-cond str)) str)
-      (format t "~D> " description))))
+      (print-prefix))))
 
 ; ---- Lazy library ---- ;
 
