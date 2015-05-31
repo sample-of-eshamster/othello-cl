@@ -121,6 +121,18 @@
 		  (com-modify-player plyr (make-string-input-stream
 					   (format nil str)))))))
       (dolist (kind '(human random mc uct))
-	(test kind)))))
+	(test kind))))
+  (prove:subtest
+      "Test com-player (not comprehensive)"
+    (labels ((test-success (com-list expected)
+	       (let ((plyr-list (t-make-player-list)))
+		 (multiple-value-bind (lst suc)
+		     (com-player com-list plyr-list)
+		   (prove:is suc expected)))))
+      ; add, remove are not tested
+      (test-success '(show) t)
+      (test-success '(help) t)
+      (test-success nil t)
+      (test-success '(not-defined) nil))))
 
 (prove:finalize)

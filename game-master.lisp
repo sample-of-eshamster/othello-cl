@@ -1,3 +1,5 @@
+(defparameter *player-file* "PLAYER_INFO")
+
 (defun game-loop (game white-mover black-mover)
   (loop until (is-game-end game) do
        (if (= (game-turn game) *white*)
@@ -5,6 +7,30 @@
 	   (funcall black-mover game))))  
 
 ;-----commands about player -----;
+
+; TODO: change the interface of adding player (to receive a player's name)
+(defun com-player (com-list plyr-list &optional (stream *standard-input*))
+  (let ((valid-com t)
+	(com-name (car com-list)))
+    (case com-name
+      ((nil help) (com-player-help))
+      (show (com-show-player plyr-list))
+      (remove (multiple-value-bind (lst suc) (com-remove-player (symbol-name (cadr com-list)) plyr-list)
+	      (if suc
+		  (progn (setf plyr-list lst))
+		  (format t "The name \"~D\" is not exist~%" (cadr com-list)))))
+      (add (setf plyr-list (com-add-player (com-init-player) plyr-list stream)))
+      (t (format t "The command \"~D\" is not defined" com-name)
+	 (setf valid-com nil)))
+    (values plyr-list valid-com)))
+
+(defun com-player-help ()
+  (labels ((princ-line (str)
+	     (princ (concatenate 'string "player " str))
+	     (fresh-line)))
+    (princ-line "show")
+    (princ-line "remove [name]")
+    (princ-line "add")))
 
 (defun com-load-player (file-name)
   (with-open-file (in file-name :direction :input)
