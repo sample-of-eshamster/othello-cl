@@ -17,11 +17,13 @@
 (defmethod init-player-params ((plyr player)) plyr)
 
 (defun construct-player (name kind)
-  (let ((result (make-instance (concat-symbol kind '-player))))
-    (setf (player-name result) (to-string name))
-    (setf (player-kind result) kind)
-    (init-player-params result)
-    result))
+  (handler-case 
+      (let ((result (make-instance (concat-symbol kind '-player))))
+	(setf (player-name result) (to-string name))
+	(setf (player-kind result) kind)
+	(init-player-params result)
+	result)
+    (simple-error (e) nil)))
   
 (defmethod player-serialize ((target player))
   (let ((result nil))
@@ -61,7 +63,9 @@
     (unless exists
       (error (format t "The key (~A) is not exists" key)))
     (setf (gethash key (player-params target)) (fit-type-to old-value value))))
-  
+
+(defun find-player-by-name (name lst)
+  (find-if #'(lambda (plyr) (equalp name (player-name plyr))) lst))
 
 ; --------- human --------- ;
 

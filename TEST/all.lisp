@@ -14,7 +14,8 @@
 				"mc"
 				"uct"
 				"human"
-				"player"))
+				"player"
+				"game-master"))
 
 (defparameter *result-list* nil)
 

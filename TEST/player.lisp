@@ -1,4 +1,4 @@
-(prove:plan 3)
+(prove:plan 5)
 
 (load "TEST/test-util.lisp")
 
@@ -20,6 +20,20 @@
     (prove:is (fit-type-to 'abc 'test) 'test)
     (prove:is-error (fit-type-to 'abc "test") 'no-applicable-method-exists)))
 
+(defparameter *all-player-kind* '(human minimax random mc uct))
+
+(prove:subtest
+    "Test consturct-player"
+  (labels ((test-exist (kind)
+	     (prove:ok (subtypep (type-of (construct-player "test" kind)) 'player))))
+    (prove:subtest
+	"Test for existing player"
+      (dolist (kind *all-player-kind*)
+	(test-exist kind)))
+    (prove:subtest
+	"Test for not-existing player"
+      (prove:is (construct-player "test" 'not-exist) nil))))
+
 (prove:subtest
     "Test serialize and desirialize player"
   (labels ((test (kind)
@@ -34,7 +48,7 @@
 		 (maphash #'(lambda (k v)
 			      (prove:is (gethash k (player-params second)) v :test #'equalp))
 			  (player-params first))))))
-    (dolist (kind '(human minimax random mc uct))
+    (dolist (kind *all-player-kind*)
       (test kind))))
 
 (prove:subtest
@@ -52,8 +66,17 @@
     (let ((move (get-nth-move (make-moves (make-nth-test-game *start-depth*)) 0)))
       (test 'human (make-string-input-stream
 		    (format nil "print~%move ~D ~D" (car move) (cdr move)))))
-    (dolist (kind '(minimax random mc uct))
+    (dolist (kind (remove 'human *all-player-kind*))
       (test kind))))
-	       
+
+(prove:subtest
+    "Test find-player-by-name"
+  (let* ((found (construct-player "test" 'mc))
+	 (lst (list (construct-player "abcd" 'human)
+		    found
+		    (construct-player "xyz" 'uct))))
+    (prove:is (find-player-by-name "test" lst) found :test #'equalp)
+    (prove:isnt (find-player-by-name "abcd" lst) found :test #'equalp)
+    (prove:ok (null (find-player-by-name "not-found" lst)))))
 
 (prove:finalize)
