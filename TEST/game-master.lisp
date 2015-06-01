@@ -44,6 +44,8 @@
 	  (delete-file file-name))
       (assert (not (probe-file file-name)))
 
+      (prove:ok (null (com-load-player file-name)))
+
       (labels ((get-result ()
 		 (com-save-player file-name save-list)
 		 (setf load-list (com-load-player file-name))

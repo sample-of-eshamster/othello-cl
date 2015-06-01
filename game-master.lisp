@@ -33,6 +33,8 @@
     (princ-line "add")))
 
 (defun com-load-player (file-name)
+  (if (not (probe-file file-name))
+      (return-from com-load-player nil))
   (with-open-file (in file-name :direction :input)
     (let (str result)
       (loop while (setf str (read-line in nil)) do
