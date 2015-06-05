@@ -1,10 +1,29 @@
 (defparameter *player-file* "PLAYER_INFO")
 
+(defun com-start-game (game com-list plyr-list)
+  (let ((mover1 (make-mover-by-name-sym plyr-list (car com-list)))
+	(mover2 (make-mover-by-name-sym plyr-list (cadr com-list))))
+    (when (or (null mover1) (null mover2))
+      (format t "2 existing player names are required")
+      (return-from com-start-game (values game nil)))
+    (values (game-loop game mover1 mover2) t)))
+
+(defun make-mover-by-name-sym (plyr-list name-sym)
+  (when (null name-sym)
+    (return-from make-mover-by-name-sym nil))
+  (let ((plyr (find-if #'(lambda (target) (equalp (player-name target)
+						  (symbol-name name-sym)))
+		       plyr-list)))
+    (when (null plyr)
+      (return-from make-mover-by-name-sym nil))
+    (player-make-mover plyr)))
+
 (defun game-loop (game white-mover black-mover)
   (loop until (is-game-end game) do
        (if (= (game-turn game) *white*)
 	   (funcall white-mover game)
-	   (funcall black-mover game))))  
+	   (funcall black-mover game)))
+  game)
 
 ;-----commands about player -----;
 
