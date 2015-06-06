@@ -1,10 +1,61 @@
 (defparameter *player-file* "PLAYER_INFO")
 
+(defun main (&key (plyr-file *player-file*) (in *standard-input*))
+  (let ((game (init-game))
+	(plyr-list (com-load-player plyr-file))
+	(input-list nil)
+	(com-name nil)
+	(arg-list nil))
+    (loop until (eq com-name 'quit) do
+	 (princ "> " )
+	 (setf input-list (stream-to-list in))
+	 (setf com-name (car input-list))
+	 (setf arg-list (cdr input-list))
+	 (case com-name
+	   ((help nil) (com-help))
+	   (show (print-game game))
+	   (init (setf game (init-game))
+		 (print-game game))
+	   (start (com-start-game game arg-list plyr-list))
+	   (player (setf plyr-list (com-player arg-list plyr-list in))
+		   (com-save-player plyr-file plyr-list))
+	   (quit)
+	   (t (format t "The command \"~D\" is not defined~%" com-name))))))
+
+(defun com-help ()
+  (labels ((princ-line (str)
+	     (princ str) (fresh-line)))
+    (princ-line "init ; initialize game")
+    (princ-line "show ; show game-board")
+    (princ-line "start [player1] [player2] ; start game")
+    (princ-line "quit")
+    (princ-line "player")
+    (com-player-help "  ")))
+
+(defun com-start-game (game com-list plyr-list)
+  (let ((mover1 (make-mover-by-name-sym plyr-list (car com-list)))
+	(mover2 (make-mover-by-name-sym plyr-list (cadr com-list))))
+    (when (or (null mover1) (null mover2))
+      (format t "2 existing player names are required")
+      (return-from com-start-game (values game nil)))
+    (values (game-loop game mover1 mover2) t)))
+
+(defun make-mover-by-name-sym (plyr-list name-sym)
+  (when (null name-sym)
+    (return-from make-mover-by-name-sym nil))
+  (let ((plyr (find-if #'(lambda (target) (equalp (player-name target)
+						  (symbol-name name-sym)))
+		       plyr-list)))
+    (when (null plyr)
+      (return-from make-mover-by-name-sym nil))
+    (player-make-mover plyr)))
+
 (defun game-loop (game white-mover black-mover)
   (loop until (is-game-end game) do
        (if (= (game-turn game) *white*)
 	   (funcall white-mover game)
-	   (funcall black-mover game))))  
+	   (funcall black-mover game)))
+  game)
 
 ;-----commands about player -----;
 
@@ -24,15 +75,17 @@
 	 (setf valid-com nil)))
     (values plyr-list valid-com)))
 
-(defun com-player-help ()
+(defun com-player-help (&optional (prefix ""))
   (labels ((princ-line (str)
-	     (princ (concatenate 'string "player " str))
+	     (princ (concatenate 'string prefix "player " str))
 	     (fresh-line)))
     (princ-line "show")
     (princ-line "remove [name]")
     (princ-line "add")))
 
 (defun com-load-player (file-name)
+  (if (not (probe-file file-name))
+      (return-from com-load-player nil))
   (with-open-file (in file-name :direction :input)
     (let (str result)
       (loop while (setf str (read-line in nil)) do

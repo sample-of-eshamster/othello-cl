@@ -1,14 +1,16 @@
-(prove:plan 2)
+(prove:plan 4)
 
 (load "TEST/test-util.lisp")
 
 (prove:subtest
     "Test game-loop"
   (labels ((test (game)
-	     (game-loop game
-			(player-make-mover (construct-player "test-white" 'random))
-			(player-make-mover (construct-player "test-black" 'random)))
-	     (prove:ok (is-game-end game))))
+	     (let ((ret
+		    (game-loop game
+			       (player-make-mover (construct-player "test-white" 'random))
+			       (player-make-mover (construct-player "test-black" 'random)))))
+	       (prove:ok (game-p ret))
+	       (prove:ok (is-game-end game)))))
     (test (init-game))
     (test (make-nth-test-game 15))))
 
@@ -16,6 +18,36 @@
   (list (construct-player "test1" 'mc)
 	(construct-player "test2" 'random)
 	(construct-player "test3" 'uct)))
+
+(prove:subtest
+    "Test com-start-game"
+  (let* ((plyr-list (t-make-player-list))
+	 (game (init-game))
+	 (depth (get-game-depth game)))
+    (setf plyr-list (cons (construct-player "test-csg" 'random) plyr-list))
+    (prove:subtest
+	"Test make-mover-by-name-sym"
+      (prove:ok (null (make-mover-by-name-sym plyr-list 'not-exist)))
+      (prove:ok (null (make-mover-by-name-sym nil 'test1)))
+      (prove:is-error (make-mover-by-name-sym plyr-list "test1") 'type-error)
+    
+      (prove:ok (not (null
+		      (funcall (make-mover-by-name-sym plyr-list 'test2) game))))
+      (prove:is (get-game-depth game) (1+ depth)))
+
+      (prove:subtest
+	  "Test com-start-game"
+	(macrolet ((test (com-list suc &body body)
+		     `(multiple-value-bind (game result)
+			  (com-start-game (init-game) ,com-list plyr-list)
+			(prove:is result ,suc)
+			(prove:ok (game-p game))
+			,@body)))
+	  (test nil nil)
+	  (test '(test1) nil)
+	  (test '(test1 not-exist) nil)
+	  (test '(test2 test-csg) t
+		(prove:ok (is-game-end game)))))))
 
 (prove:subtest
     "Test commands about player"
@@ -43,6 +75,8 @@
       (if (probe-file file-name)
 	  (delete-file file-name))
       (assert (not (probe-file file-name)))
+
+      (prove:ok (null (com-load-player file-name)))
 
       (labels ((get-result ()
 		 (com-save-player file-name save-list)
@@ -134,5 +168,31 @@
       (test-success '(help) t)
       (test-success nil t)
       (test-success '(not-defined) nil))))
+
+(prove:subtest
+    "Test the main function"
+  (let ((test-file "TMP_PLAYER_INFO"))
+    (labels ((test (com-str)
+	       (format t "~%----------<start main>---------~%")
+	       (main :plyr-file test-file
+		     :in (make-string-input-stream
+			  (format nil
+				  (concatenate 'string com-str "~%quit~%"))))))
+      (if (probe-file test-file)
+	  (delete-file test-file))
+      (prove:pass "Because the auto test is difficult, we only print some information")
+      
+      (prove:subtest
+	  "Test empty, help and a not-existed command"
+	(test "")
+	(test "help~%not-exist"))
+      (com-save-player test-file (t-make-player-list))
+      (prove:subtest
+	  "Test player save and load"
+	(test "player show~%player remove test3~%player show")
+	(test "player show"))
+      (prove:subtest
+	  "Test playe game and init game"
+	(test "show~%start test2 test2~%show~%init")))))
 
 (prove:finalize)
