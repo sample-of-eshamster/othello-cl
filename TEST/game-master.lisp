@@ -1,4 +1,4 @@
-(prove:plan 3)
+(prove:plan 4)
 
 (load "TEST/test-util.lisp")
 
@@ -168,5 +168,31 @@
       (test-success '(help) t)
       (test-success nil t)
       (test-success '(not-defined) nil))))
+
+(prove:subtest
+    "Test the main function"
+  (let ((test-file "TMP_PLAYER_INFO"))
+    (labels ((test (com-str)
+	       (format t "~%----------<start main>---------~%")
+	       (main :plyr-file test-file
+		     :in (make-string-input-stream
+			  (format nil
+				  (concatenate 'string com-str "~%quit~%"))))))
+      (if (probe-file test-file)
+	  (delete-file test-file))
+      (prove:pass "Because the auto test is difficult, we only print some information")
+      
+      (prove:subtest
+	  "Test empty, help and a not-existed command"
+	(test "")
+	(test "help~%not-exist"))
+      (com-save-player test-file (t-make-player-list))
+      (prove:subtest
+	  "Test player save and load"
+	(test "player show~%player remove test3~%player show")
+	(test "player show"))
+      (prove:subtest
+	  "Test playe game and init game"
+	(test "show~%start test2 test2~%show~%init")))))
 
 (prove:finalize)
