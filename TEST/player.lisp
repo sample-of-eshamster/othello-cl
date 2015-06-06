@@ -1,50 +1,82 @@
-;; ; --------- human --------- ;
+(prove:plan 5)
 
-;; (defun read-command ()
-;;   (let ((line (read-line))
-;; 	(result nil))
-;;     (with-input-from-string (s line)
-;;       (labels ((add-to-list ()
-;; 		 (let ((value (read s nil)))
-;; 		   (if (null value) (return-from add-to-list))
-;; 		   (setf result (cons value result))
-;; 		   (add-to-list))))
-;; 	(add-to-list)))
-;;     (reverse result)))
+(load "TEST/test-util.lisp")
 
-;; (defun eval-play-command (game com-list)
-;;   (case (car com-list)
-;;     (print (print-game game) nil)
-;;     (reverse (reverse-game game))
-;;     (move (if (eq 2 (length (cdr com-list)))
-;; 	       (move-game game (cadr com-list) (caddr com-list))
-;; 	       nil))
-;;     (t (princ "This command is not defined.")
-;;        nil)))
+(prove:subtest
+    "Test fit-type-to"
+  (prove:subtest
+      "number"
+    (prove:is (fit-type-to 12 '111) 111)
+    (prove:is-error (fit-type-to 12 'not-number) 'simple-error))
+  (prove:subtest
+      "string"
+    (prove:is (fit-type-to "str" 'test) "TEST"))
+  (prove:subtest
+      "function"
+    (prove:is (fit-type-to #'+ '-) #'-)
+    (prove:is-error (fit-type-to #'+ 'not-defined-func-name) 'undefined-function))
+  (prove:subtest
+      "others"
+    (prove:is (fit-type-to 'abc 'test) 'test)
+    (prove:is-error (fit-type-to 'abc "test") 'no-applicable-method-exists)))
 
-;; (defun move-by-human(game)
-;;   (print-game game nil)
-;;   (if (is-game-end game)
-;;       (progn (print "This game has ended")
-;; 	     (return-from move-by-human))
-;;   (loop while (not (eval-play-command game (read-command))))))
+(defparameter *all-player-kind* '(human minimax random mc uct))
 
-;; ; --------- minimax --------- ;
-;; (defun move-by-minimax(game depth)
-;;   (if (is-game-end game)
-;;       (return-from move-by-minimax))
-;;   (let ((move (select-move-by-minimax game depth #'eval-game-by-minimax)))
-;;     (move-game game (car move) (cdr move))))
+(prove:subtest
+    "Test consturct-player"
+  (labels ((test-exist (kind)
+	     (prove:ok (subtypep (type-of (construct-player "test" kind)) 'player))))
+    (prove:subtest
+	"Test for existing player"
+      (dolist (kind *all-player-kind*)
+	(test-exist kind)))
+    (prove:subtest
+	"Test for not-existing player"
+      (prove:is (construct-player "test" 'not-exist) nil))))
 
-;; ; --------- random --------- ;
+(prove:subtest
+    "Test serialize and desirialize player"
+  (labels ((test (kind)
+	     (let* ((name "test-name")
+		    (first (construct-player name kind))
+		    (first-dump (player-serialize first))
+		    (second (player-deserialize first-dump)))
+	       (prove:subtest
+		   (format nil "Test ~D" kind)
+		 (prove:ok (stringp first-dump))
+		 (prove:is first-dump (player-serialize second) :test #'equalp)
+		 (maphash #'(lambda (k v)
+			      (prove:is (gethash k (player-params second)) v :test #'equalp))
+			  (player-params first))))))
+    (dolist (kind *all-player-kind*)
+      (test kind))))
 
-;; (defun move-by-uniform-random(game)
-;;   (if (is-game-end game)
-;;       (return-from move-by-uniform-random))
-;;   (move-by-random-policy game #'make-uniform-policy))
+(prove:subtest
+    "Test player-make-mover"
+  (defparameter *start-depth* 5)
+  (labels ((test (kind &optional (opt nil))
+	     (let* ((name "test-name")
+		    (plyr (construct-player name kind))
+		    (mover (player-make-mover plyr))
+		    (game (make-nth-test-game *start-depth*)))
+	       (if (null opt)
+		   (prove:ok (funcall mover game))
+		   (prove:ok (funcall mover game opt)))
+	       (prove:is (get-game-depth game) (1+ *start-depth*)))))
+    (let ((move (get-nth-move (make-moves (make-nth-test-game *start-depth*)) 0)))
+      (test 'human (make-string-input-stream
+		    (format nil "print~%move ~D ~D" (car move) (cdr move)))))
+    (dolist (kind (remove 'human *all-player-kind*))
+      (test kind))))
 
-;; (defun move-by-uniform-mc(game times)
-;;   (if (is-game-end game)
-;;       (return-from move-by-uniform-mc))
-;;   (let ((move (mc-simulate game #'make-uniform-policy times)))
-;;     (move-game game (car move) (cdr move))))
+(prove:subtest
+    "Test find-player-by-name"
+  (let* ((found (construct-player "test" 'mc))
+	 (lst (list (construct-player "abcd" 'human)
+		    found
+		    (construct-player "xyz" 'uct))))
+    (prove:is (find-player-by-name "test" lst) found :test #'equalp)
+    (prove:isnt (find-player-by-name "abcd" lst) found :test #'equalp)
+    (prove:ok (null (find-player-by-name "not-found" lst)))))
+
+(prove:finalize)

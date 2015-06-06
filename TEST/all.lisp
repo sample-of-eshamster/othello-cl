@@ -12,7 +12,10 @@
 				"minimax"
 				"random-move"
 				"mc"
-				"uct"))
+				"uct"
+				"human"
+				"player"
+				"game-master"))
 
 (defparameter *result-list* nil)
 
