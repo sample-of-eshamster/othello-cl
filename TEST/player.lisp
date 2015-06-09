@@ -14,6 +14,7 @@
   (prove:subtest
       "function"
     (prove:is (fit-type-to #'+ '-) #'-)
+    (prove:is (fit-type-to #'+ #'-) #'-)
     (prove:is-error (fit-type-to #'+ 'not-defined-func-name) 'undefined-function))
   (prove:subtest
       "others"

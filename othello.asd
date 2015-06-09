@@ -4,6 +4,7 @@
 ; (in-package :othello-asd)
 
 (ql:quickload :cl-ppcre)
+(ql:quickload :prove)
 
 (defsystem "othello"
   :description "lisp othello written for learning common lisp"
