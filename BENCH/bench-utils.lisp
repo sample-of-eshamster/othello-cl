@@ -38,7 +38,8 @@
 		       :if-exists :new-version
 		       :if-does-not-exist :create)
     (dolist (bench-all bench-all-lst)
-      (print-bench-all bench-all :out out))))
+      (print-bench-all bench-all :out out)
+      (terpri out))))
   
 
 (defun dump-bench-all-lst (file-name bench-all-lst)
