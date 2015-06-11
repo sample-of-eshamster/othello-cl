@@ -53,8 +53,26 @@
 
   (prove:is (get-game-result (init-game)) *not-game-end*)
   (prove:is (get-game-result (make-nth-test-game 3)) *not-game-end*)
-  ; not cover : white win, draw
-  (prove:is (get-game-result (make-nth-test-game 100)) *black*))
+
+  (prove:is (get-game-result (make-nth-test-game 100)) *black*)
+  (let ((num-cell (* *board-size* *board-size*)))
+    (labels ((test (white black expected)
+	       (let ((game (init-game)))
+		 (dotimes (i num-cell)
+		   (set-to-board (game-board game)
+				 (mod i *board-size*)
+				 (floor (/ i *board-size*))
+				 (if (< i white) *white*
+				     (if (< i (+ white black)) *black* *empty*))))
+		 (setf (game-turn game) *empty*)
+		 (assert (is-game-end game))
+		 (prove:is (get-game-result game) expected))))
+      (test 33 31 *white*)
+      (test 31 25 *white*)
+      (test 31 33 *black*)
+      (test 25 31 *black*)
+      (test 30 30 *empty*)
+      (test 32 32 *empty*))))
 
 
 (prove:subtest "Test do-in-move-reverse"
