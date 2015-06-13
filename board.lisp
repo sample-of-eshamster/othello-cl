@@ -38,7 +38,6 @@
       (return-from get-piece nil))
   (let ((pnt (+ (* x *board-size*) y)))
 	(aref board pnt)))
-  
 
 (defun print-board(board)
   (dotimes (i 3) (princ '\ ))
@@ -54,18 +53,20 @@
     (princ "\ |")
     (fresh-line)))
 
-(defun count-reverse-to-same(board x y dir turn now-dist)
-  (let ((next-cell (get-next-cell x y dir))
-	(rev-turn (reverse-turn turn)))
-    (if next-cell
-	(let* ((next-x (car next-cell))
-	       (next-y (cdr next-cell))
-	       (next-piece (get-piece board next-x next-y)))
-	  (cond ((eq next-piece turn) now-dist)
-		((eq next-piece rev-turn)
-		 (count-reverse-to-same board next-x next-y dir turn (+ now-dist 1)))
-		(t 0)))
-	0)))
+(let ((tmp-move (make-a-move 1 1)))
+  (defun count-reverse-to-same(board x y dir turn)
+    (let ((fn-replace-by-next (get-fn-replace-by-next dir))
+	  (rev-turn (reverse-turn turn))
+	  (now-dist 0))
+      (set-to-move tmp-move x y)
+      (loop while t do
+	   (aif-second-true (funcall fn-replace-by-next tmp-move)
+			    (let ((next-piece (get-piece board (car it) (cdr it))))
+			      (cond ((eq next-piece turn) (return))
+				    ((eq next-piece rev-turn) (incf now-dist))
+				    (t (return-from count-reverse-to-same 0))))
+			    (return-from count-reverse-to-same 0)))
+      now-dist)))
 
 (defun is-invalid-pnt-turn (x y turn)
   (or (is-empty turn)
@@ -76,7 +77,7 @@
 	  (not (is-empty (get-piece board x y))))
       (return-from check-move-valid nil))
   (dotimes (dir 8)
-    (if (< 0 (count-reverse-to-same board x y dir turn 0))
+    (if (< 0 (count-reverse-to-same board x y dir turn))
 	(return-from check-move-valid t)))
   nil)
 
@@ -103,7 +104,7 @@
 		    (get-next-y next-y dir)
 		    dir))))
       (dotimes (dir 8)
-	(if (< 0 (count-reverse-to-same board x y dir turn 0))
+	(if (< 0 (count-reverse-to-same board x y dir turn))
 	    (reverse-piece (get-next-x x dir) (get-next-y y dir) dir))))
     reverse-list))
 
