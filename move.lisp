@@ -9,6 +9,12 @@
 (defun add-move (moves x y)
   (cons (make-a-move x y) moves))
 
+; TODO: make-test
+(defmacro move-x (move)
+  `(car ,move))
+(defmacro move-y (move)
+  `(cdr ,move))
+
 (defun move-is-in-board (move)
   (let ((x (car move))
 	(y (cdr move)))

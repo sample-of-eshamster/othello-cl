@@ -7,15 +7,17 @@
 				"tree"
 				"move"
 				"board"
-				"game"
-				"eval-board"
-				"minimax"
-				"random-move"
-				"mc"
-				"uct"
-				"human"
-				"player"
-				"game-master"))
+				;; "game"
+				;; "eval-board"
+				;; "minimax"
+				;; "random-move"
+				;; "mc"
+				;; "uct"
+				;; "human"
+				;; "player"
+				;; "game-master"
+				)
+  )
 
 (defun check-prove-result (str)
   (let ((result-line (car (last (ppcre:split "\\n" str)))))
