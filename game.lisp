@@ -55,12 +55,11 @@
   (let* ((record (car (game-history game)))
 	 (move (history-record-move record)))
     (set-to-board (game-board game) (car move) (cdr move) *empty*)
-    (mapcar (lambda (pnt)
-	      (let ((x (car pnt))
-		    (y (cdr pnt)))
-		(set-to-board (game-board game) x y
-			      (reverse-turn (get-piece (game-board game) x y)))))
-	    (history-record-reverse-list record))
+    (dolist (pnt (history-record-reverse-list record))
+      (let ((x (car pnt))
+	    (y (cdr pnt)))
+	(set-to-board (game-board game) x y
+		      (reverse-turn (get-piece (game-board game) x y)))))
     (setf (game-turn game) (history-record-turn record))
     (setf (game-history game) (cdr (game-history game)))
     game))
