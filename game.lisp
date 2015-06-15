@@ -8,11 +8,13 @@
 (defstruct game
   board
   turn
+  move-store
   history)
 
 (defun init-game()
   (let ((a-game (make-game :board (init-board)
 			   :turn 1
+			   :move-store (init-move-store)
 			   :history nil)))
     a-game))
 
@@ -22,15 +24,15 @@
 
 ; TODO: compare by hash
 (defun is-game-same-phase(game1 game2)
-  (equalp game1 game2))
+  (equalp (game-history game1) (game-history game2)))
 
 (defun judge-next-turn (moved-game)
   (let* ((board (game-board moved-game))
 	 (turn (game-turn moved-game))
 	 (rev-turn (reverse-turn turn)))
-    (if (< 0 (length (make-moves-on-board board rev-turn)))
+    (if (< 0 (move-store-count (make-moves-on-board board rev-turn (game-move-store moved-game))))
 	rev-turn
-	(if (< 0 (length (make-moves-on-board board turn)))
+	(if (< 0 (move-store-count (make-moves-on-board board turn (game-move-store moved-game))))
 	    turn
 	    0))))
 
@@ -74,7 +76,7 @@
   (length (game-history game)))
 
 (defun make-moves (game)
-  (make-moves-on-board (game-board game) (game-turn game)))
+  (make-moves-on-board (game-board game) (game-turn game) (game-move-store game)))
 
 (defmacro do-in-move-reverse (game move &body body)
   (let ((result (gensym))
@@ -107,7 +109,10 @@
 (defun print-game (game &optional (prints-history nil))
   (print-board (game-board game))
   (print-turn (game-turn game))
-  (print `(Move-> ,(make-moves game)))
+  (let ((moves nil))
+    (do-move-store (move (make-moves game))
+      (setf moves (cons move moves)))
+    (print `(Move-> ,moves)))
   (if prints-history
       (labels ((print-a-history (history)
 		 (princ history)

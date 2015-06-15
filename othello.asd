@@ -16,7 +16,7 @@
 	       (:file "move")
 	       (:file "move-store")
 	       (:file "board")
-	       ;; (:file "game")
+	       (:file "game")
 	       ;; (:file "eval-board")
 	       ;; (:file "minimax")
 	       ;; (:file "random-move")

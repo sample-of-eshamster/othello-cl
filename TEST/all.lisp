@@ -7,7 +7,7 @@
 				"tree"
 				"move"
 				"board"
-				;; "game"
+				"game"
 				;; "eval-board"
 				;; "minimax"
 				;; "random-move"
