@@ -8,7 +8,7 @@
 				"move"
 				"board"
 				"game"
-				;; "eval-board"
+				"eval-board"
 				;; "minimax"
 				;; "random-move"
 				;; "mc"

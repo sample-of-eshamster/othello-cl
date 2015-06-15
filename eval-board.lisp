@@ -25,7 +25,7 @@
 			   ((eq piece (reverse-turn turn)) (decf score base-score)))))
 		 score))
 	     (eval-num-move ()
-	       (* (length (make-moves game))
+	       (* (move-store-count (make-moves game))
 		  (if (eq turn (game-turn game)) 1 -1)
 		  (gethash 'num-move param))))
       (+ (eval-corner)
