@@ -15,6 +15,22 @@
   (defparameter moves (list (make-a-move 1 2)))
   (prove:is (add-move moves 2 3) `(,(make-a-move 2 3) ,(make-a-move 1 2))))
 
+(prove:subtest "Test getter (move-x, move-y)"
+  (let ((move (make-a-move 1 2)))
+    (prove:is (move-x move) 1)
+    (prove:is (move-y move) 2)
+    
+    (prove:is (setf (move-x move) 4) 4)
+    (prove:is (move-x move) 4)
+    (prove:is (setf (move-y move) 3) 3)
+    (prove:is (move-y move) 3)))
+
+(prove:subtest "Test clone-move"
+  (let* ((move (make-a-move 1 2))
+	 (cloned (clone-move move)))
+    (prove:is move cloned :test #'equalp)
+    (prove:isnt move cloned :test #'eq)))
+
 (prove:subtest "Test get-nth-move"
   (defparameter moves (add-move moves 2 3))
   (prove:ok (not (get-nth-move moves -1)))

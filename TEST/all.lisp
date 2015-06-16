@@ -9,7 +9,7 @@
 				"board"
 				"game"
 				"eval-board"
-				;; "minimax"
+				"minimax"
 				;; "random-move"
 				;; "mc"
 				;; "uct"

@@ -86,7 +86,7 @@
 	   (,g-move ,move))
        (if (not (check-move-valid
 		 (game-board ,g-game) (car ,g-move) (cdr ,g-move) (game-turn ,g-game)))
-	   (error "ERROR: An Invalid Move!"))
+	   (error (format nil "ERROR: An Invalid Move! (~A)" ,move)))
        (move-game ,g-game (car ,g-move) (cdr ,g-move))
        (let ((,result (progn ,@body)))
 	 (reverse-game ,g-game)

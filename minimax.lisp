@@ -25,7 +25,8 @@
 		   (turn (game-turn game))
 		   (saves-child (or is-all-tree (eq depth rest-depth)))
 		   (able-to-cut nil))
-	       (dolist (move (make-moves game))
+	       (do-move-store (move (make-moves game))
+		 (if saves-child (setf move (clone-move move)))
 		 (do-in-move-reverse game move
 		   (let* ((child (if saves-child (make-a-node move)))
 			  (child-score (eval-recurse child (- rest-depth 1) alpha beta)))
