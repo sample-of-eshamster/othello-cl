@@ -6,6 +6,7 @@
 				"utils"
 				"tree"
 				"move"
+				"move-store"
 				"board"
 				"game"
 				"eval-board"

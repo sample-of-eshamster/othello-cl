@@ -31,13 +31,6 @@
     (prove:is move cloned :test #'equalp)
     (prove:isnt move cloned :test #'eq)))
 
-(prove:subtest "Test get-nth-move"
-  (defparameter moves (add-move moves 2 3))
-  (prove:ok (not (get-nth-move moves -1)))
-  (prove:ok (not (get-nth-move moves 10)))
-  (prove:ok (not (get-nth-move nil 0)))
-  (prove:is (get-nth-move moves 1) (make-a-move 1 2)))
-
 (prove:subtest
     "Test get-fn-replace-by-next"
   (labels ((test-ok (dir expected-x expected-y)
@@ -66,8 +59,7 @@
     (test *dir-right-down* 5 5  4 7)))
 
 (prove:subtest "Test other funcs"
-  (prove:is (moves-len moves) 2)
-
+  (setf moves (add-move moves 2 3))
   (prove:is (mapcar-moves #'(lambda (move) (car move)) moves) '(2 1)))
 
 (prove:finalize)
