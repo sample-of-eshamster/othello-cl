@@ -13,7 +13,7 @@
 				"minimax"
 				"random-move"
 				"mc"
-				;; "uct"
+				"uct"
 				;; "human"
 				;; "player"
 				;; "game-master"

@@ -21,7 +21,7 @@
 	       (:file "minimax")
 	       (:file "random-move")
 	       (:file "mc")
-	       ;; (:file "uct")
+	       (:file "uct")
 	       ;; (:file "human")
 	       ;; (:file "player")
 	       ;; (:file "game-master")
