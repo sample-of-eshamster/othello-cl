@@ -14,7 +14,7 @@
 				"random-move"
 				"mc"
 				"uct"
-				;; "human"
+				"human"
 				;; "player"
 				;; "game-master"
 				)

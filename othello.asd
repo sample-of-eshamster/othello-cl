@@ -22,7 +22,7 @@
 	       (:file "random-move")
 	       (:file "mc")
 	       (:file "uct")
-	       ;; (:file "human")
+	       (:file "human")
 	       ;; (:file "player")
 	       ;; (:file "game-master")
 	       )
