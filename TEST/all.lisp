@@ -12,7 +12,7 @@
 				"eval-board"
 				"minimax"
 				"random-move"
-				;; "mc"
+				"mc"
 				;; "uct"
 				;; "human"
 				;; "player"

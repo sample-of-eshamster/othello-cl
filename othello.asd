@@ -20,7 +20,7 @@
 	       (:file "eval-board")
 	       (:file "minimax")
 	       (:file "random-move")
-	       ;; (:file "mc")
+	       (:file "mc")
 	       ;; (:file "uct")
 	       ;; (:file "human")
 	       ;; (:file "player")

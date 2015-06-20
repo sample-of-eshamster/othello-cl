@@ -26,12 +26,11 @@
       99999))
 
 (defun init-mc-nodes (game)
-  (let ((moves (make-moves game)))
-    (mapcar-moves (lambda (move)
-		    (make-mc-node :move move
-				  :sum 0
-				  :num 0))
-		  moves)))
+  (mapcar-move-store (lambda (move)
+		       (make-mc-node :move (clone-move move)
+				     :sum 0
+				     :num 0))
+		     (make-moves game)))
 
 (defun select-mc-node-by-ucb (mc-nodes total-num)
   (select-max-node (lambda (node)
