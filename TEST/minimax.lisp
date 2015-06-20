@@ -57,7 +57,7 @@
       (dolist (start-depth '(8 13))
 	(let ((game (make-nth-test-game start-depth)))
 	  (test game 4)
-	  (do-move-store (move (make-moves game))
+	  (do-move-store (move (clone-move-store (make-moves game)))
 	    (do-in-move-reverse game move
 	      (test game 2))))))))
 

@@ -84,9 +84,9 @@
 	(g-move (gensym)))
     `(let ((,g-game ,game)
 	   (,g-move ,move))
-       (if (not (check-move-valid
-		 (game-board ,g-game) (car ,g-move) (cdr ,g-move) (game-turn ,g-game)))
-	   (error (format nil "ERROR: An Invalid Move! (~A)" ,move)))
+       (unless (check-move-valid
+		(game-board ,g-game) (car ,g-move) (cdr ,g-move) (game-turn ,g-game))
+	   (error (format nil "ERROR: An Invalid Move! (~A)" ,g-move)))
        (move-game ,g-game (car ,g-move) (cdr ,g-move))
        (let ((,result (progn ,@body)))
 	 (reverse-game ,g-game)
