@@ -80,3 +80,9 @@
 	((< n 0) nil)
 	((>= n (move-store-count store)) nil)
 	(t (aref (move-store-moves store) n))))
+
+(defun mapcar-move-store (fn store)
+  (let ((lst nil))
+    (do-move-store (move store)
+      (setf lst (cons (funcall fn move) lst)))
+  lst))

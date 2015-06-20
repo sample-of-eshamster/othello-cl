@@ -47,6 +47,3 @@
 
 (defun get-fn-replace-by-next (dir)
   (aref fns-replace-by-next dir))
-
-(defun mapcar-moves (func moves)
-  (mapcar func moves))

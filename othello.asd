@@ -19,7 +19,7 @@
 	       (:file "game")
 	       (:file "eval-board")
 	       (:file "minimax")
-	       ;; (:file "random-move")
+	       (:file "random-move")
 	       ;; (:file "mc")
 	       ;; (:file "uct")
 	       ;; (:file "human")

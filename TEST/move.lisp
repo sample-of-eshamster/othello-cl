@@ -58,8 +58,4 @@
     (test *dir-right-up*   5 3  7 4)
     (test *dir-right-down* 5 5  4 7)))
 
-(prove:subtest "Test other funcs"
-  (setf moves (add-move moves 2 3))
-  (prove:is (mapcar-moves #'(lambda (move) (car move)) moves) '(2 1)))
-
 (prove:finalize)
