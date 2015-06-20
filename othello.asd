@@ -23,7 +23,7 @@
 	       (:file "mc")
 	       (:file "uct")
 	       (:file "human")
-	       ;; (:file "player")
+	       (:file "player")
 	       ;; (:file "game-master")
 	       )
   :serial t)

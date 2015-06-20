@@ -15,7 +15,7 @@
 				"mc"
 				"uct"
 				"human"
-				;; "player"
+				"player"
 				;; "game-master"
 				)
   )
