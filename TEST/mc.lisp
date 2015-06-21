@@ -51,7 +51,7 @@
   (prove:is (init-mc-nodes (make-nth-test-game 3)) '(#S(MC-NODE :MOVE (2 . 4) :SUM 0 :NUM 0) #S(MC-NODE :MOVE (4 . 2) :SUM 0 :NUM 0)) :test #'equalp)
   (defun prove-mc-node-len (start)
     (let ((game (make-nth-test-game start)))
-      (prove:is (length (init-mc-nodes game)) (length (make-moves game)))))
+      (prove:is (length (init-mc-nodes game)) (move-store-count (make-moves game)))))
   (prove-mc-node-len 5)
   (prove-mc-node-len 34)
   (prove-mc-node-len 100))

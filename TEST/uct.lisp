@@ -20,7 +20,7 @@
  (prove:subtest
   "Test num-child"
   (let* ((game (make-nth-test-game 2))
-	 (num-moves (length (make-moves game))))
+	 (num-moves (move-store-count (make-moves game))))
     (labels ((prove-child-num (intv visit-times target-num)
 	       (let ((tree (make-expanded-node game visit-times intv)))
 		 (prove:is (get-num-children tree) target-num))))

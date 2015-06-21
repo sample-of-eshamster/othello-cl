@@ -9,6 +9,14 @@
 (defun add-move (moves x y)
   (cons (make-a-move x y) moves))
 
+(defmacro move-x (move)
+  `(car ,move))
+(defmacro move-y (move)
+  `(cdr ,move))
+
+(defun clone-move (move)
+  (cons (move-x move) (move-y move)))
+
 (defun move-is-in-board (move)
   (let ((x (car move))
 	(y (cdr move)))
@@ -39,17 +47,3 @@
 
 (defun get-fn-replace-by-next (dir)
   (aref fns-replace-by-next dir))
-
-; TODO: change the order of arguments (to equalize with 'nth')
-; TODO: change from func to the macro
-(defun get-nth-move (moves n)
-  (cond ((null moves) nil)
-	((< n 0) nil)
-	((= n 0) (car moves))
-	(t (get-nth-move (cdr moves) (- n 1)))))
-
-(defun moves-len (moves)
-  (length moves))
-
-(defun mapcar-moves (func moves)
-  (mapcar func moves))

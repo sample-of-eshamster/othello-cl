@@ -15,12 +15,21 @@
   (defparameter moves (list (make-a-move 1 2)))
   (prove:is (add-move moves 2 3) `(,(make-a-move 2 3) ,(make-a-move 1 2))))
 
-(prove:subtest "Test get-nth-move"
-  (defparameter moves (add-move moves 2 3))
-  (prove:ok (not (get-nth-move moves -1)))
-  (prove:ok (not (get-nth-move moves 10)))
-  (prove:ok (not (get-nth-move nil 0)))
-  (prove:is (get-nth-move moves 1) (make-a-move 1 2)))
+(prove:subtest "Test getter (move-x, move-y)"
+  (let ((move (make-a-move 1 2)))
+    (prove:is (move-x move) 1)
+    (prove:is (move-y move) 2)
+    
+    (prove:is (setf (move-x move) 4) 4)
+    (prove:is (move-x move) 4)
+    (prove:is (setf (move-y move) 3) 3)
+    (prove:is (move-y move) 3)))
+
+(prove:subtest "Test clone-move"
+  (let* ((move (make-a-move 1 2))
+	 (cloned (clone-move move)))
+    (prove:is move cloned :test #'equalp)
+    (prove:isnt move cloned :test #'eq)))
 
 (prove:subtest
     "Test get-fn-replace-by-next"
@@ -48,10 +57,5 @@
     (test *dir-left-down*  3 5  0 4)
     (test *dir-right-up*   5 3  7 4)
     (test *dir-right-down* 5 5  4 7)))
-
-(prove:subtest "Test other funcs"
-  (prove:is (moves-len moves) 2)
-
-  (prove:is (mapcar-moves #'(lambda (move) (car move)) moves) '(2 1)))
 
 (prove:finalize)

@@ -81,13 +81,14 @@
 	(return-from check-move-valid t)))
   nil)
 
-(defun make-moves-on-board(board turn)
-  (let ((moves (list)))
+(defun make-moves-on-board(board turn &optional (base-store nil))
+  (let ((store (if base-store base-store (init-move-store))))
+    (reset-move-store store)
     (dotimes (y *board-size*)
       (dotimes (x *board-size*)
 	(if (check-move-valid board x y turn)
-	    (setf moves (add-move moves x y)))))
-    moves))
+	    (add-to-move-store store x y))))
+    store))
 
 (defun move-on-board (board x y turn)
   (if (or (is-invalid-pnt-turn x y turn)
