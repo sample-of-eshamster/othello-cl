@@ -3,9 +3,13 @@
 (load "TEST/test-util.lisp")
 
 (prove:subtest "Test make-uniform-policy"
-  (prove:is (make-uniform-policy (make-nth-test-game 2)) '(1/4 1/4 1/4 1/4))
-  (prove:is (make-uniform-policy (make-nth-test-game 5)) '(1/7 1/7 1/7 1/7 1/7 1/7 1/7))
-  (prove:is (make-uniform-policy (make-nth-test-game 100)) nil))
+  (labels ((test (depth expected)
+	     (let* ((game (make-nth-test-game depth))
+		    (move-store (make-moves game)))
+	       (prove:is (make-uniform-policy game move-store) expected))))
+  (test 2 '(1/4 1/4 1/4 1/4))
+  (test 5 '(1/7 1/7 1/7 1/7 1/7 1/7 1/7))
+  (test 100 nil)))
 
 (prove:subtest "Test decide-move-by-random"
   (let* ((game (make-nth-test-game 2))

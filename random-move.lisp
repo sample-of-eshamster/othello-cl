@@ -1,14 +1,12 @@
 ; TODO: reduce memory allocation by making a store of probability as move-store
-; TODO: receive move-store from caller
-(defun make-uniform-policy(game)
-  (let* ((move-store (make-moves game))
-	 (len (move-store-count move-store)))
+(defun make-uniform-policy(game move-store)
+  (let* ((len (move-store-count move-store)))
     (mapcar-move-store (lambda (move) (/ 1 len)) move-store)))
 
 (defun decide-move-by-random-policy(game fn-make-policy rand-val)
   (if (is-game-end game) (return-from decide-move-by-random-policy))
   (let* ((move-store (make-moves game))
-	 (policy (funcall fn-make-policy game)))
+	 (policy (funcall fn-make-policy game move-store)))
     (labels ((decide (count sum rest-policy)
 	       (cond ((null (car rest-policy)) count)
 		     ((>= sum rand-val) count)
