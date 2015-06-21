@@ -14,6 +14,12 @@
 (defmacro move-y (move)
   `(cdr ,move))
 
+(defun move-p (obj)
+  (handler-case
+      (and (numberp (car obj))
+	   (numberp (cdr obj)))
+    (t (e) (declare (ignore e)) nil)))
+
 (defun clone-move (move)
   (cons (move-x move) (move-y move)))
 

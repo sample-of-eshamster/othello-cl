@@ -1,6 +1,6 @@
 ; (ql:quickload :prove)
 
-(prove:plan 6)
+(prove:plan 7)
 
 (prove:subtest "Test make-a-move"
   (prove:is (make-a-move 1 2) '(1 . 2)))
@@ -24,6 +24,15 @@
     (prove:is (move-x move) 4)
     (prove:is (setf (move-y move) 3) 3)
     (prove:is (move-y move) 3)))
+
+(prove:subtest "Test move-p"
+  (prove:ok (move-p (make-a-move 1 2)))
+  (prove:ok (move-p (make-a-move 10 -2))) ; no range check
+  (prove:ok (move-p '(1 . 2)))
+  (prove:ok (not (move-p 1)))
+  (prove:ok (not (move-p '(1 2))))
+  (prove:ok (not (move-p 'test)))
+  (prove:ok (not (move-p '(not move)))))
 
 (prove:subtest "Test clone-move"
   (let* ((move (make-a-move 1 2))

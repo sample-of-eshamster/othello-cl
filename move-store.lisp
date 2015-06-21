@@ -1,4 +1,3 @@
-; TODO: make test
 (defparameter *max-move-store* (- (* *board-size* *board-size*) 4))
 
 (defstruct move-store
@@ -14,11 +13,14 @@
 							  lst))))
 
 (defun reset-move-store (store)
-  (setf (move-store-count store) 0))
+  (setf (move-store-count store) 0)
+  store)
 
+; skip the range check
 (defun add-to-move-store (store x y)
   (set-to-move (aref (move-store-moves store) (move-store-count store)) x y)
-  (incf (move-store-count store)))
+  (incf (move-store-count store))
+  store)
 
 (defmacro do-move-store (arg &body body)
   (let ((i (gensym))
@@ -38,7 +40,8 @@
 (defun copy-move-store (dst src)
   (reset-move-store dst)
   (do-move-store (move src)
-    (add-to-move-store dst (car move) (cdr move))))
+    (add-to-move-store dst (car move) (cdr move)))
+  dst)
 (defun clone-move-store (src)
   (let ((dst (init-move-store)))
     (copy-move-store dst src)
@@ -48,24 +51,28 @@
   :unused-store
   :used-store)
 
-(defun num-reserved-move-store-stack (buf)
-  (length (move-store-stack-used-store buf)))
+(defun num-allocated-move-store-stack (stack)
+  (+ (length (move-store-stack-used-store stack))
+     (length (move-store-stack-unused-store stack))))
 
-(defun reserve-move-store-from-stack (buf)
-  (macrolet ((unused (buf) `(move-store-stack-unused-store ,buf))
-	     (used (buf) `(move-store-stack-used-store ,buf)))
-    (when (null (unused buf))
-      (setf (used buf) (cons (init-move-store) (used buf)))
-      (return-from reserve-move-store-from-stack (car (used buf))))
-    (setf (used buf) (cons (car (unused buf)) (used buf)))
-    (setf (unused buf) (cdr (unused buf)))
-    (car (used buf))))
+(defun num-reserved-move-store-stack (stack)
+  (length (move-store-stack-used-store stack)))
 
-(defun free-move-store-to-stack (buf)
-  (macrolet ((unused (buf) `(move-store-stack-unused-store ,buf))
-	     (used (buf) `(move-store-stack-used-store ,buf)))
-    (setf (unused buf) (cons (car (used buf)) (unused buf)))
-    (setf (used buf) (cdr (used buf)))))
+(defun reserve-move-store-from-stack (stack)
+  (macrolet ((unused (stack) `(move-store-stack-unused-store ,stack))
+	     (used (stack) `(move-store-stack-used-store ,stack)))
+    (when (null (unused stack))
+      (setf (used stack) (cons (init-move-store) (used stack)))
+      (return-from reserve-move-store-from-stack (car (used stack))))
+    (setf (used stack) (cons (car (unused stack)) (used stack)))
+    (setf (unused stack) (cdr (unused stack)))
+    (car (used stack))))
+
+(defun free-move-store-to-stack (stack)
+  (macrolet ((unused (stack) `(move-store-stack-unused-store ,stack))
+	     (used (stack) `(move-store-stack-used-store ,stack)))
+    (setf (unused stack) (cons (car (used stack)) (unused stack)))
+    (setf (used stack) (cdr (used stack)))))
 
 (defmacro with-cloned-move-store (stack cloned<>store &body body)
   `(let ((,(car cloned<>store) (reserve-move-store-from-stack ,stack)))
