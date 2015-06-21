@@ -16,9 +16,8 @@
 				"uct"
 				"human"
 				"player"
-				;; "game-master"
-				)
-  )
+				"game-master"
+				))
 
 (defun check-prove-result (str)
   (let ((result-line (car (last (ppcre:split "\\n" str)))))
