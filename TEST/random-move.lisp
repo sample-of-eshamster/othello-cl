@@ -1,4 +1,4 @@
-(prove:plan 3)
+(prove:plan 4)
 
 (load "TEST/test-util.lisp")
 
@@ -31,5 +31,35 @@
   (dotimes (n 10)
     (move-by-random-policy *test-game* #'make-uniform-policy))
   (prove:is (get-game-depth *test-game*) 10))
+
+(prove:subtest "Test prob-store"
+  (let ((store (make-prob-store)))
+    (prove:subtest "Test initialization"
+      (prove:is (prob-store-count store) 0)
+      (let ((result t))
+	(dotimes (i (length (prob-store-probs store)))
+	  (unless (numberp (aref (prob-store-probs store) i))
+	    (setf result nil)
+	    (return)))
+	(prove:ok result "The type of all elements should be number")))
+    
+    (prove:subtest "Test add ,reset and loop"
+      (prove:is-type (add-to-prob-store store 0.1) 'prob-store)
+      (prove:is-type (add-to-prob-store store 1/7) 'prob-store)
+      (let ((lst nil))
+	(do-prob-store (prob store)
+	  (setf lst (cons prob lst)))
+	(prove:is lst '(1/7 0.1) :test #'equalp))
+      
+      (prove:is-type (reset-prob-store store) 'prob-store)
+      (prove:is (prob-store-count store) 0))
+    
+    (prove:subtest "Test get-nth-prob"
+      (reset-prob-store store)
+      (add-to-prob-store store 0.5)
+      (prove:ok (not (get-nth-prob nil store)))
+      (prove:ok (not (get-nth-prob -1 store)))
+      (prove:ok (not (get-nth-prob 1 store)))
+      (prove:is (get-nth-prob 0 store) 0.5))))
   
 (prove:finalize)
