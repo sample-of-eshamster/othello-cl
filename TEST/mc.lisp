@@ -34,9 +34,10 @@
 (defun prove-game-is-end (game)
   (prove-in (get-game-result game) *end-status-list*))
 (prove:subtest "Test sim-to-game-end"
-  (prove-game-is-end (sim-to-game-end (init-game) #'make-uniform-policy))
-  (prove-game-is-end (sim-to-game-end (make-nth-test-game 3) #'make-uniform-policy))
-  (prove-game-is-end (sim-to-game-end (make-nth-test-game 100)  #'make-uniform-policy)))
+  (let ((prob-store (make-prob-store)))
+    (prove-game-is-end (sim-to-game-end (init-game) #'make-uniform-policy prob-store))
+    (prove-game-is-end (sim-to-game-end (make-nth-test-game 3) #'make-uniform-policy prob-store))
+    (prove-game-is-end (sim-to-game-end (make-nth-test-game 100)  #'make-uniform-policy prob-store))))
 
 (prove:subtest "Test mc-simulate-once"
   (defun prove-mc-sim-once (start repeat)
