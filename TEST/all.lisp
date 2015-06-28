@@ -7,6 +7,7 @@
 				"tree"
 				"move"
 				"move-store"
+				"history-record"
 				"board"
 				"game"
 				"eval-board"

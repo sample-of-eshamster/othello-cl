@@ -1,10 +1,3 @@
-; ----------- history-record -------------
-(defstruct history-record
-  turn
-  move
-  reverse-list)
-
-; ----------- game -------------
 (defstruct game
   board
   turn
