@@ -73,6 +73,21 @@
 	  (prove:is-type (pop-history-record store) 'history-record)
 	  (test-count store 0)
 	  (prove:ok (not (pop-history-record store)))
-	  (test-count store 0))))))
+	  (test-count store 0))))
+
+    (prove:subtest
+	"Test do-history-record-store"
+      (let ((store (make-history-record-store))
+	    (loop-count 0))
+	(regist-new-history-record store (make-fn-add-move 1 2))
+	(regist-new-history-record store (make-fn-add-move 3 4))
+	(do-history-record-store (record store)
+	  (prove:is (get-nth-move (history-record-reverse-list record) 0)
+		    (if (= loop-count 0)
+			(make-a-move 3 4)
+			(make-a-move 1 2))
+		    :test #'equalp)
+	  (incf loop-count))
+	(prove:is loop-count 2)))))
 
 (prove:finalize)

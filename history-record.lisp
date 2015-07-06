@@ -29,3 +29,13 @@
   (decf (history-record-store-count store))
   (aref (history-record-store-records store)
 	(history-record-store-count store)))
+
+(defmacro do-history-record-store (name<>store &body body)
+  (let ((i (gensym))
+	(len (gensym))
+	(store (gensym)))
+    `(let* ((,store ,(cadr name<>store))
+	    (,len (history-record-store-count ,store)))
+       (dotimes (,i ,len)
+	 (let ((,(car name<>store) (aref (history-record-store-records ,store) (1- (- ,len ,i)))))
+	   ,@body)))))
