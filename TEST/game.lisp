@@ -5,14 +5,16 @@
 (defparameter *test-game* (init-game))
 
 (prove:subtest "Test init-game"
-  (prove:is *test-game* #S(GAME :BOARD #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0) :TURN 1 :HISTORY NIL)
-	    :test #'equalp)
   (prove:is (get-game-depth *test-game*) 0)
   (prove:ok (not (reverse-game *test-game*))))
   
 (prove:subtest "Test move-game"
   (prove:ok (not (move-game *test-game* -1 3)))
-  (prove:ok (not (move-game *test-game* 5 5))))
+  (prove:ok (not (move-game *test-game* 5 5)))
+  (let* ((game (make-nth-test-game 2))
+	 (depth (get-game-depth game)))
+    (assert (move-game game 4 5))
+    (prove:is (get-game-depth game) (1+ depth))))
 
 (prove:subtest "Test is-game-same-phase"
   (prove:ok (is-game-same-phase (make-nth-test-game 3) (make-nth-test-game 3)))
@@ -25,11 +27,11 @@
 (prove:subtest "Test funcs for test"
   (setf *test-game* (make-nth-test-game 3))
 
-  (defparameter *expected-game* #S(GAME :BOARD #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0) :TURN -1 :HISTORY (#S(HISTORY-RECORD :TURN 1 :MOVE (2 . 3) :REVERSE-LIST ((3 . 3))) #S(HISTORY-RECORD :TURN -1 :MOVE (2 . 2) :REVERSE-LIST ((3 . 3))) #S(HISTORY-RECORD :TURN 1 :MOVE (3 . 2) :REVERSE-LIST ((3 . 3))))))
-
-  (prove:ok (is-game-same-phase *test-game* *expected-game*))
   (prove:is (get-game-depth *test-game*) 3)
-  (prove:is (make-moves *test-game*) '((2 . 4) (4 . 2))))
+  (let ((store (make-moves *test-game*)))
+    (prove:is (move-store-count store) 2)
+    (prove:ok (contains-move store 2 4))
+    (prove:ok (contains-move store 4 2))))
 
 (prove:subtest "Test reverse-game"
   (setf *test-game* (make-nth-test-game 5))
@@ -53,8 +55,26 @@
 
   (prove:is (get-game-result (init-game)) *not-game-end*)
   (prove:is (get-game-result (make-nth-test-game 3)) *not-game-end*)
-  ; not cover : white win, draw
-  (prove:is (get-game-result (make-nth-test-game 100)) *black*))
+
+  (prove:is (get-game-result (make-nth-test-game 100)) *black*)
+  (let ((num-cell (* *board-size* *board-size*)))
+    (labels ((test (white black expected)
+	       (let ((game (init-game)))
+		 (dotimes (i num-cell)
+		   (set-to-board (game-board game)
+				 (mod i *board-size*)
+				 (floor (/ i *board-size*))
+				 (if (< i white) *white*
+				     (if (< i (+ white black)) *black* *empty*))))
+		 (setf (game-turn game) *empty*)
+		 (assert (is-game-end game))
+		 (prove:is (get-game-result game) expected))))
+      (test 33 31 *white*)
+      (test 31 25 *white*)
+      (test 31 33 *black*)
+      (test 25 31 *black*)
+      (test 30 30 *empty*)
+      (test 32 32 *empty*))))
 
 
 (prove:subtest "Test do-in-move-reverse"
@@ -72,23 +92,24 @@
   (prove:is (get-game-depth *test-game*) 3))
 
 (prove:subtest "Test print-game"
-  (prove:is-print (print-game (make-nth-test-game 3) t)
+  (prove:is-print (print-game (make-nth-test-game 4) t)
 		  "   01234567
 |0 -------- |
 |1 -------- |
 |2 --XO---- |
-|3 --OOO--- |
-|4 ---OX--- |
+|3 --XOO--- |
+|4 --XXX--- |
 |5 -------- |
 |6 -------- |
 |7 -------- |
-Black turn
+White turn
 
-(MOVE-> ((2 . 4) (4 . 2))) 
+(MOVE-> ((5 . 5) (4 . 5) (3 . 5) (2 . 5) (1 . 5) (1 . 4) (1 . 3) (1 . 2) (1 . 1))) 
 +++++ history start +++++
-#S(HISTORY-RECORD :TURN 1 :MOVE (2 . 3) :REVERSE-LIST ((3 . 3)))
-#S(HISTORY-RECORD :TURN -1 :MOVE (2 . 2) :REVERSE-LIST ((3 . 3)))
-#S(HISTORY-RECORD :TURN 1 :MOVE (3 . 2) :REVERSE-LIST ((3 . 3)))
+TURN: -1, Move: (2 . 4), REVERSE-LIST: ((3 . 4) (2 . 3))
+TURN:  1, Move: (2 . 3), REVERSE-LIST: ((3 . 3))
+TURN: -1, Move: (2 . 2), REVERSE-LIST: ((3 . 3))
+TURN:  1, Move: (3 . 2), REVERSE-LIST: ((3 . 3))
 +++++ history end +++++
 "))
 

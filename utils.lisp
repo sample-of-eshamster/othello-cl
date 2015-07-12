@@ -51,6 +51,11 @@
 	((not (funcall fn-loop-cond str)) str)
       (print-prefix))))
 
+(defmacro aif-second-true (test if-ex else-ex)
+  (let ((second (gensym)))
+    `(multiple-value-bind (it ,second) ,test
+       (if ,second ,if-ex ,else-ex))))
+
 ; ---- Lazy library ---- ;
 
 (defmacro lazy (&body body)

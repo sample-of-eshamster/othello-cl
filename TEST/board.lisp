@@ -36,28 +36,43 @@
   (prove:ok (null (get-piece *test-board* -1 5))))
 
 (prove:subtest "Test make-moves-on-board"
-  (prove:is (make-moves-on-board *test-board* *white*)
-	    '((4 . 5) (5 . 4) (2 . 3) (3 . 2)))
-  (prove:is (make-moves-on-board *test-board* *black*)
-	    '((3 . 5) (2 . 4) (5 . 3) (4 . 2)))
-  (prove:ok (null (make-moves-on-board *test-board* nil))))
+  (labels ((test (store expected-moves)
+	     (prove:is (move-store-count store) (length expected-moves))
+	     (dolist (move expected-moves)
+	       (prove:ok (contains-move store (car move) (cdr move))))))
+  (test (make-moves-on-board *test-board* *white*)
+    '((4 . 5) (5 . 4) (2 . 3) (3 . 2)))
+  (test (make-moves-on-board *test-board* *black*)
+    '((3 . 5) (2 . 4) (5 . 3) (4 . 2)))
+  (test (make-moves-on-board *test-board* nil) nil)))
 
 (prove:subtest "Test move-on-board"
-  (prove:ok (not (move-on-board *test-board* -1 5 *white*)))
-  (prove:ok (not (move-on-board *test-board* 3 5 nil)))
-  (prove:ok (not (move-on-board *test-board* 5 5 *white*)))
-  (prove:is *test-board* (init-board) :test #'equalp)
+  (prove:subtest "Test error"
+    (prove:ok (not (move-on-board *test-board* -1 5 *white*)))
+    (prove:ok (not (move-on-board *test-board* 3 5 nil)))
+    (prove:ok (not (move-on-board *test-board* 5 5 *white*))))
 
-  (prove:is (move-on-board *test-board* 4 5 *white*) '((4 . 4)))
-  (prove:is *test-board*
-	    #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-	    :test #'equalp)
-  (move-on-board *test-board* 3 5 *black*)
-  (move-on-board *test-board* 2 4 *white*)
-  (prove:is (move-on-board *test-board* 5 5 *black*) '((4 . 4) (4 . 5)))
-  (prove:is *test-board*
-	    #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 1 -1 0 0 0 0 0 1 -1 -1 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-	    :test #'equalp))
+  (prove:subtest "Test move"
+    (prove:is *test-board* (init-board) :test #'equalp)
+    (labels ((prove-reverse-list (result expected)
+	       (prove:is-type result 'move-store)
+	       (prove:is (move-store-count result) (length expected))
+	       (let ((all t))
+		 (dolist (move expected)
+		   (unless (contains-move result (car move) (cdr move))
+		     (setf all nil)
+		     (return)))
+		 (prove:ok all "All of moves in the list are contained in the reverse result"))))
+	     (prove-reverse-list (move-on-board *test-board* 4 5 *white*) '((4 . 4)))
+	     (prove:is *test-board*
+	       #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+	       :test #'equalp)
+	     (move-on-board *test-board* 3 5 *black*)
+	     (move-on-board *test-board* 2 4 *white*)
+	     (prove-reverse-list (move-on-board *test-board* 5 5 *black*) '((4 . 4) (4 . 5)))
+	     (prove:is *test-board*
+	       #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 1 -1 0 0 0 0 0 1 -1 -1 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+	       :test #'equalp))))
 
 (prove:subtest "Test count-piece"
   (prove:is (count-piece *test-board* *white*) 3)
