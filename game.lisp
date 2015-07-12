@@ -1,10 +1,3 @@
-; ----------- history-record -------------
-(defstruct history-record
-  turn
-  move
-  reverse-list)
-
-; ----------- game -------------
 (defstruct game
   board
   turn
@@ -15,7 +8,7 @@
   (let ((a-game (make-game :board (init-board)
 			   :turn 1
 			   :move-store (init-move-store)
-			   :history nil)))
+			   :history (make-history-record-store))))
     a-game))
 
 (defun is-game-end(game)
@@ -24,7 +17,9 @@
 
 ; TODO: compare by hash
 (defun is-game-same-phase(game1 game2)
-  (equalp (game-history game1) (game-history game2)))
+  (and
+   (eq (game-turn game1) (game-turn game2))
+   (equalp (game-board game1) (game-board game2))))
 
 (defun judge-next-turn (moved-game)
   (let* ((board (game-board moved-game))
@@ -38,32 +33,33 @@
 
 (defun move-game (game x y)
   (let ((board (game-board game))
-	(turn (game-turn game))
-	(reverse-list nil))
-    (if (check-move-valid board x y turn)
-	(progn (setf reverse-list
-		     (move-on-board (game-board game) x y turn))
-	       (setf (game-history game)
-		     (cons (make-history-record :turn turn
-						:move (cons x y)
-						:reverse-list reverse-list)
-			   (game-history game)))
-	       (setf (game-turn game) (judge-next-turn game))
-	       game)
-	nil)))
+	(turn (game-turn game)))
+    (unless (check-move-valid board x y turn)
+      (return-from move-game nil))
+    (regist-new-history-record
+     (game-history game)
+     #'(lambda (record)
+	 (block exit
+	   (unless (move-on-board (game-board game) x y turn
+				  :reverse-store (history-record-reverse-list record))
+	     (return-from exit nil))
+	   (set-to-move (history-record-move record) x y)
+	   (setf (history-record-turn record) turn)
+	   t)))
+    (setf (game-turn game) (judge-next-turn game))
+    game))
 
 (defun reverse-game (game)
-  (if (not (game-history game)) (return-from reverse-game nil))
-  (let* ((record (car (game-history game)))
+  (if (<= (get-game-depth game) 0) (return-from reverse-game nil))
+  (let* ((record (pop-history-record (game-history game)))
 	 (move (history-record-move record)))
     (set-to-board (game-board game) (car move) (cdr move) *empty*)
-    (dolist (pnt (history-record-reverse-list record))
-      (let ((x (car pnt))
-	    (y (cdr pnt)))
+    (do-move-store (move (history-record-reverse-list record))
+      (let ((x (move-x move))
+	    (y (move-y move)))
 	(set-to-board (game-board game) x y
 		      (reverse-turn (get-piece (game-board game) x y)))))
     (setf (game-turn game) (history-record-turn record))
-    (setf (game-history game) (cdr (game-history game)))
     game))
 
 (defun reverse-game-to-depth (game depth)
@@ -73,7 +69,7 @@
   (reverse-game-to-depth game depth))
 
 (defun get-game-depth (game)
-  (length (game-history game)))
+  (history-record-store-count (game-history game)))
 
 (defun make-moves (game)
   (make-moves-on-board (game-board game) (game-turn game) (game-move-store game)))
@@ -115,12 +111,18 @@
     (print `(Move-> ,moves)))
   (if prints-history
       (labels ((print-a-history (history)
-		 (princ history)
-		 (fresh-line)))
+		 (let ((lst nil))
+		   (do-move-store (move (history-record-reverse-list history))
+		     (setf lst (cons move lst)))
+		   (format t "TURN: ~2D, Move: ~A, REVERSE-LIST: ~D~%"
+			   (history-record-turn history)
+			   (history-record-move history)
+			   lst))))
 	(fresh-line)
 	(princ "+++++ history start +++++")
 	(fresh-line)
-	(mapcar #'print-a-history (game-history game))
+	(do-history-record-store (record (game-history game))
+	  (print-a-history record))
 	(princ "+++++ history end +++++")))
   (fresh-line))
  

@@ -4,11 +4,11 @@
   :count
   :moves)
 
-(defun init-move-store ()
+(defun init-move-store (&key (num-moves *max-move-store*))
   (make-move-store :count 0
-		   :moves (make-array *max-move-store*
+		   :moves (make-array num-moves
 				      :initial-contents (let ((lst nil))
-							  (dotimes (i *max-move-store*)
+							  (dotimes (i num-moves)
 							    (setf lst (cons (make-a-move 0 0) lst)))
 							  lst))))
 

@@ -92,23 +92,24 @@
   (prove:is (get-game-depth *test-game*) 3))
 
 (prove:subtest "Test print-game"
-  (prove:is-print (print-game (make-nth-test-game 3) t)
+  (prove:is-print (print-game (make-nth-test-game 4) t)
 		  "   01234567
 |0 -------- |
 |1 -------- |
 |2 --XO---- |
-|3 --OOO--- |
-|4 ---OX--- |
+|3 --XOO--- |
+|4 --XXX--- |
 |5 -------- |
 |6 -------- |
 |7 -------- |
-Black turn
+White turn
 
-(MOVE-> ((2 . 4) (4 . 2))) 
+(MOVE-> ((5 . 5) (4 . 5) (3 . 5) (2 . 5) (1 . 5) (1 . 4) (1 . 3) (1 . 2) (1 . 1))) 
 +++++ history start +++++
-#S(HISTORY-RECORD :TURN 1 :MOVE (2 . 3) :REVERSE-LIST ((3 . 3)))
-#S(HISTORY-RECORD :TURN -1 :MOVE (2 . 2) :REVERSE-LIST ((3 . 3)))
-#S(HISTORY-RECORD :TURN 1 :MOVE (3 . 2) :REVERSE-LIST ((3 . 3)))
+TURN: -1, Move: (2 . 4), REVERSE-LIST: ((3 . 4) (2 . 3))
+TURN:  1, Move: (2 . 3), REVERSE-LIST: ((3 . 3))
+TURN: -1, Move: (2 . 2), REVERSE-LIST: ((3 . 3))
+TURN:  1, Move: (3 . 2), REVERSE-LIST: ((3 . 3))
 +++++ history end +++++
 "))
 
