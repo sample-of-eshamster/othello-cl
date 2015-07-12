@@ -55,6 +55,8 @@
   (symbol-name target))
 (defmethod fit-type-to ((right-value function) (target symbol))
   (coerce target 'function))
+(defmethod fit-type-to ((right-value function) (target function))
+  target)
 (defmethod fit-type-to (right-value (target symbol))
   target)
 

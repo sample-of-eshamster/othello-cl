@@ -4,6 +4,7 @@
 ; (in-package :othello-asd)
 
 (ql:quickload :cl-ppcre)
+(ql:quickload :prove)
 
 (defsystem "othello"
   :description "lisp othello written for learning common lisp"
@@ -13,6 +14,8 @@
 	       (:file "utils")
 	       (:file "tree")
 	       (:file "move")
+	       (:file "move-store")
+	       (:file "history-record")
 	       (:file "board")
 	       (:file "game")
 	       (:file "eval-board")
@@ -22,5 +25,6 @@
 	       (:file "uct")
 	       (:file "human")
 	       (:file "player")
-	       (:file "game-master"))
+	       (:file "game-master")
+	       )
   :serial t)

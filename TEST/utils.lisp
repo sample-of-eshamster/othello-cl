@@ -46,6 +46,13 @@
 			      (format nil "   ~%abc~%~%  test "))) "test"))
 
 (prove:subtest
+    "Test aif-second-true"
+  (prove:is (aif-second-true (values 1 t) (+ it 10) 1234)
+	    11)
+  (prove:is (aif-second-true (values 1 nil) (+ it 10) 1234)
+	    1234))
+
+(prove:subtest
  "Test lazy evaluation"
  
  (prove:subtest

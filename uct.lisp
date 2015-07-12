@@ -31,7 +31,7 @@
 	 (moves (uct-node-unexpanded-moves node))
 	 (expand-intv (uct-param-expand-intv uct-param)))
     (if (eq moves 'has-not-made-child)
-	(progn (setf moves (make-moves game))
+	(progn (setf moves (mapcar-move-store #'(lambda (m) (clone-move m)) (make-moves game)))
 	       (setf (uct-node-unexpanded-moves node) moves)))
     (let ((move (car moves)))
       (if (or (null move)
