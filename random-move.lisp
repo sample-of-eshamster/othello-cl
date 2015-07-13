@@ -29,9 +29,11 @@
 
 ; TODO: reduce memory allocation by making a store of probability as move-store
 (defun make-uniform-policy(game move-store prob-store)
+  (declare (ignore game))
   (reset-prob-store prob-store)
   (let* ((len (move-store-count move-store)))
     (do-move-store (move move-store)
+      (declare (ignore move))
       (add-to-prob-store prob-store (/ 1 len))))
   prob-store)
 

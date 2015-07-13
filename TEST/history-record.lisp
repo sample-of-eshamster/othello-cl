@@ -45,7 +45,7 @@
 	(prove:subtest
 	    "Test not regist"
 	  (regist-new-history-record store 
-				     #'(lambda (record) nil))
+				     #'(lambda (record) (declare (ignore record)) nil))
 	  (test-count store 0))
 	
 	(prove:subtest

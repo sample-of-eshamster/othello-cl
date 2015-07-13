@@ -149,6 +149,7 @@
 	       (let ((plyr (construct-player "test" kind))
 		     (str ""))
 		 (maphash #'(lambda (k v)
+			      (declare (ignore k v))
 			      (setf str (concatenate 'string "~%" str)))
 			  (player-params plyr))
 		 (prove:ok
@@ -162,6 +163,7 @@
 	       (let ((plyr-list (t-make-player-list)))
 		 (multiple-value-bind (lst suc)
 		     (com-player com-list plyr-list)
+		   (declare (ignore lst))
 		   (prove:is suc expected)))))
       ; add, remove are not tested
       (test-success '(show) t)

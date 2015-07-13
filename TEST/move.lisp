@@ -54,6 +54,7 @@
 	     (let ((move (make-a-move start-x start-y)))
 	       (multiple-value-bind (tmp-move suc)
 		   (funcall (get-fn-replace-by-next dir) move)
+		 (declare (ignore tmp-move))
 		 (prove:ok (not suc)))))
 	   (test (dir x1 y1 x2 y2)
 	     (test-ok dir x1 y1)
