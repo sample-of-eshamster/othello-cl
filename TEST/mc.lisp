@@ -83,18 +83,18 @@
   `(mc-node-sum (nth ,n ,nodes)))
 (prove:subtest
     "Test select-mc-node-by-ave"
-  (defparameter *test-mc-nodes* (init-mc-nodes (make-nth-test-game 57)))
-  (assert (= (length *test-mc-nodes*) 3))
+  (let ((test-mc-nodes (init-mc-nodes (make-nth-test-game 57))))
+    (assert (= (length test-mc-nodes) 3))
+    
+    (setf (t-nth-mc-sum 0 test-mc-nodes) -2)
+    (setf (t-nth-mc-num 0 test-mc-nodes) 5)
+    (setf (t-nth-mc-sum 2 test-mc-nodes) -7)
+    (setf (t-nth-mc-num 2 test-mc-nodes) 10)
+    (prove:is (mc-node-sum (select-mc-node-by-ave test-mc-nodes)) -2)
+    
+    (setf (t-nth-mc-sum 2 test-mc-nodes) 3)
+    (prove:is (mc-node-sum (select-mc-node-by-ave test-mc-nodes)) 3)))
   
-  (setf (t-nth-mc-sum 0 *test-mc-nodes*) -2)
-  (setf (t-nth-mc-num 0 *test-mc-nodes*) 5)
-  (setf (t-nth-mc-sum 2 *test-mc-nodes*) -7)
-  (setf (t-nth-mc-num 2 *test-mc-nodes*) 10)
-  (prove:is (mc-node-sum (select-mc-node-by-ave *test-mc-nodes*)) -2)
-
-  (setf (t-nth-mc-sum 2 *test-mc-nodes*) 3)
-  (prove:is (mc-node-sum (select-mc-node-by-ave *test-mc-nodes*)) 3))
-
 (prove:subtest
     "Test mc-simulate"
   (prove:ok (not (mc-simulate (make-nth-test-game 100) #'make-uniform-policy 5)))

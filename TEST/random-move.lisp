@@ -27,7 +27,6 @@
 	       (prove:is (decide-move-by-random-policy game #'make-uniform-policy
 						       rand-val prob-store)
 			 (get-nth-move moves answer-idx))))
-      (print moves)
       (test-decision -2 0)
       (test-decision 0 0)
       (test-decision 0.1 0)

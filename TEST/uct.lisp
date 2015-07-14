@@ -125,21 +125,21 @@
 
 (prove:subtest
     "Test mcts-simulate-once"
-  (defparameter *test-game* (make-nth-test-game 4))
-  (defparameter *uct-node* (make-a-uct-node nil))
-  (defparameter *uct-param* (make-def-uct-param))
-  (setf (uct-param-expand-intv *uct-param*) 2)
-  (dotimes (x 100)
-    (setf *uct-node* (mcts-simulate-once *test-game* *uct-node* *uct-param*)))
-  (prove:ok (> (get-tree-size *uct-node*) 5)) ; 5 itself is meaningless
-  (prove:ok (> (get-tree-depth *uct-node*) 1))
-  (print-tree *uct-node*
-	      :max-depth 2
-	      :f-proc-value #'(lambda (node)
-				(format nil "num: ~A, sum: ~A"
-					(uct-node-num node)
-					(uct-node-sum node)))))
-
+  (let ((test-game (make-nth-test-game 4))
+	(uct-node (make-a-uct-node nil))
+	(uct-param (make-def-uct-param)))
+    (setf (uct-param-expand-intv uct-param) 2)
+    (dotimes (x 100)
+      (setf uct-node (mcts-simulate-once test-game uct-node uct-param)))
+    (prove:ok (> (get-tree-size uct-node) 5)) ; 5 itself is meaningless
+    (prove:ok (> (get-tree-depth uct-node) 1))
+    (print-tree uct-node
+		:max-depth 2
+		:f-proc-value #'(lambda (node)
+				  (format nil "num: ~A, sum: ~A"
+					  (uct-node-num node)
+					  (uct-node-sum node))))))
+  
 (prove:subtest
     "Test uct-simulate"
   (labels ((test-simulate (start-depth times)

@@ -12,8 +12,8 @@
 
 (prove:subtest
     "Test add-move"
-  (defparameter moves (list (make-a-move 1 2)))
-  (prove:is (add-move moves 2 3) `(,(make-a-move 2 3) ,(make-a-move 1 2))))
+  (let ((moves (list (make-a-move 1 2))))
+    (prove:is (add-move moves 2 3) `(,(make-a-move 2 3) ,(make-a-move 1 2)))))
 
 (prove:subtest
     "Test getter (move-x, move-y)"
