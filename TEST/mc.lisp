@@ -2,16 +2,14 @@
 
 (load "TEST/test-util.lisp")
 
-; TODO: make *ucb-max* const in source
-(defparameter *expected-ucb-max* 10000)
 (prove:subtest
     "Test calc-ucb"
-  (prove:ok (> (calc-ucb 2  0 10) *expected-ucb-max*))
-  (prove:ok (> (calc-ucb 2 -2 10) *expected-ucb-max*))
-  (prove:ok (> (calc-ucb 2 10  0) *expected-ucb-max*))
-  (prove:ok (> (calc-ucb 2 10 -2) *expected-ucb-max*))
-  (prove:ok (> (calc-ucb 2 -2 -2) *expected-ucb-max*))
-  (prove:ok (< (calc-ucb -2 10 10) *expected-ucb-max*))
+  (prove:ok (= (calc-ucb 2  0 10) *ucb-max*))
+  (prove:ok (= (calc-ucb 2 -2 10) *ucb-max*))
+  (prove:ok (= (calc-ucb 2 10  0) *ucb-max*))
+  (prove:ok (= (calc-ucb 2 10 -2) *ucb-max*))
+  (prove:ok (= (calc-ucb 2 -2 -2) *ucb-max*))
+  (prove:ok (< (calc-ucb -2 10 10) *ucb-max*))
 
   (prove:ok (< (calc-ucb 2 2 2)
 	       (calc-ucb 4 2 2)))

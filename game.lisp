@@ -25,9 +25,9 @@
   (let* ((board (game-board moved-game))
 	 (turn (game-turn moved-game))
 	 (rev-turn (reverse-turn turn)))
-    (if (< 0 (move-store-count (make-moves-on-board board rev-turn (game-move-store moved-game))))
+    (if (< 0 (move-store-count (make-moves-on-board board rev-turn :store (game-move-store moved-game))))
 	rev-turn
-	(if (< 0 (move-store-count (make-moves-on-board board turn (game-move-store moved-game))))
+	(if (< 0 (move-store-count (make-moves-on-board board turn :store (game-move-store moved-game))))
 	    turn
 	    0))))
 
@@ -72,7 +72,7 @@
   (history-record-store-count (game-history game)))
 
 (defun make-moves (game)
-  (make-moves-on-board (game-board game) (game-turn game) (game-move-store game)))
+  (make-moves-on-board (game-board game) (game-turn game) :store (game-move-store game)))
 
 (defmacro do-in-move-reverse (game move &body body)
   (let ((result (gensym))

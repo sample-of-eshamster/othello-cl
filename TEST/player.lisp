@@ -64,7 +64,7 @@
 		     (prove:ok (funcall mover game))
 		     (prove:ok (funcall mover game opt)))
 		 (prove:is (get-game-depth game) (1+ start-depth)))))
-      (let ((move (get-nth-move (make-moves (make-nth-test-game start-depth)) 0)))
+      (let ((move (get-nth-move 0 (make-moves (make-nth-test-game start-depth)))))
 	(test 'human (make-string-input-stream
 		      (format nil "print~%move ~D ~D" (car move) (cdr move)))))
       (dolist (kind (remove 'human *all-player-kind*))

@@ -17,9 +17,9 @@
   (labels ((test-count (store expected)
 	     (prove:is (history-record-store-count store) expected))
 	   (test-record (records record-idx move-idx expected-x expected-y)
-	     (prove:is (get-nth-move (history-record-reverse-list
-				      (aref records record-idx))
-				     move-idx)
+	     (prove:is (get-nth-move move-idx
+				     (history-record-reverse-list
+				      (aref records record-idx)))
 		       (make-a-move expected-x expected-y)
 		       :test #'equalp))
 	   (make-fn-add-move (x y)
@@ -82,7 +82,7 @@
 	(regist-new-history-record store (make-fn-add-move 1 2))
 	(regist-new-history-record store (make-fn-add-move 3 4))
 	(do-history-record-store (record store)
-	  (prove:is (get-nth-move (history-record-reverse-list record) 0)
+	  (prove:is (get-nth-move 0 (history-record-reverse-list record))
 		    (if (= loop-count 0)
 			(make-a-move 3 4)
 			(make-a-move 1 2))

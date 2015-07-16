@@ -1,5 +1,3 @@
-; TODO: make tests
-
 (defparameter *max-reverse-list* (* (- *board-size* 2) 3) )
 (defparameter *max-history-record* (- (* *board-size* *board-size*) 4))
 

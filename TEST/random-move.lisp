@@ -26,7 +26,7 @@
     (labels ((test-decision (rand-val answer-idx)
 	       (prove:is (decide-move-by-random-policy game #'make-uniform-policy
 						       rand-val prob-store)
-			 (get-nth-move moves answer-idx))))
+			 (get-nth-move answer-idx moves))))
       (test-decision -2 0)
       (test-decision 0 0)
       (test-decision 0.1 0)

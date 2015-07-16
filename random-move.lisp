@@ -27,7 +27,6 @@
 
 ; --------------------- ;
 
-; TODO: reduce memory allocation by making a store of probability as move-store
 (defun make-uniform-policy(game move-store prob-store)
   (declare (ignore game))
   (reset-prob-store prob-store)
@@ -47,7 +46,7 @@
 		       ((>= sum rand-val) count)
 		       (t (decide (1+ count) (+ sum prob) store))))))
       (funcall fn-make-policy game move-store prob-store)
-      (get-nth-move move-store (decide 0 (get-nth-prob 0 prob-store) prob-store)))))
+      (get-nth-move (decide 0 (get-nth-prob 0 prob-store) prob-store) move-store))))
 
 (defun move-by-random-policy (game fn-make-policy &key (prob-store (make-prob-store)))
   (let ((move (decide-move-by-random-policy game fn-make-policy (random 1.0) prob-store)))
