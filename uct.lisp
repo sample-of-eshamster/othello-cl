@@ -55,6 +55,7 @@
 		      parent)))
 
 (defun reflect-sim-result (game uct-tree uct-param result)
+  (declare (ignore game uct-param))
   (incf (uct-node-sum (get-node-value uct-tree)) result)
   (incf (uct-node-num (get-node-value uct-tree)))
   (values result uct-tree))

@@ -54,21 +54,21 @@
 
 (prove:subtest
     "Test player-make-mover"
-  (defparameter *start-depth* 5)
-  (labels ((test (kind &optional (opt nil))
-	     (let* ((name "test-name")
-		    (plyr (construct-player name kind))
-		    (mover (player-make-mover plyr))
-		    (game (make-nth-test-game *start-depth*)))
-	       (if (null opt)
-		   (prove:ok (funcall mover game))
-		   (prove:ok (funcall mover game opt)))
-	       (prove:is (get-game-depth game) (1+ *start-depth*)))))
-    (let ((move (get-nth-move (make-moves (make-nth-test-game *start-depth*)) 0)))
-      (test 'human (make-string-input-stream
-		    (format nil "print~%move ~D ~D" (car move) (cdr move)))))
-    (dolist (kind (remove 'human *all-player-kind*))
-      (test kind))))
+  (let ((start-depth 5))
+    (labels ((test (kind &optional (opt nil))
+	       (let* ((name "test-name")
+		      (plyr (construct-player name kind))
+		      (mover (player-make-mover plyr))
+		      (game (make-nth-test-game start-depth)))
+		 (if (null opt)
+		     (prove:ok (funcall mover game))
+		     (prove:ok (funcall mover game opt)))
+		 (prove:is (get-game-depth game) (1+ start-depth)))))
+      (let ((move (get-nth-move 0 (make-moves (make-nth-test-game start-depth)))))
+	(test 'human (make-string-input-stream
+		      (format nil "print~%move ~D ~D" (car move) (cdr move)))))
+      (dolist (kind (remove 'human *all-player-kind*))
+	(test kind)))))
 
 (prove:subtest
     "Test find-player-by-name"

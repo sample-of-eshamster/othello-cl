@@ -19,22 +19,25 @@
 (prove:subtest
     "Test add, get and reset move-store"
   (let ((store (init-move-store)))
-    (prove:subtest "Test adding from init"
+    (prove:subtest
+	"Test adding from init"
       (prove:is-type (add-to-move-store store 1 2) 'move-store)
       (prove:is-type (add-to-move-store store 3 4) 'move-store)
       (prove:is (move-store-count store) 2)
-      (prove:is (get-nth-move store 0) (make-a-move 1 2) :test #'equalp)
-      (prove:is (get-nth-move store 1) (make-a-move 3 4) :test #'equalp))
-    (prove:subtest "Test error paths of getting"
-      (prove:ok (not (get-nth-move nil 0)))
-      (prove:ok (not (get-nth-move store -1)))
-      (prove:ok (not (get-nth-move store 2))))
-    (prove:subtest "Test resetting and re-adding"
+      (prove:is (get-nth-move 0 store) (make-a-move 1 2) :test #'equalp)
+      (prove:is (get-nth-move 1 store) (make-a-move 3 4) :test #'equalp))
+    (prove:subtest
+	"Test error paths of getting"
+      (prove:ok (not (get-nth-move 0 nil)))
+      (prove:ok (not (get-nth-move -1 store)))
+      (prove:ok (not (get-nth-move 2 store))))
+    (prove:subtest
+	"Test resetting and re-adding"
       (prove:is-type (reset-move-store store) 'move-store)
       (prove:is (move-store-count store) 0)
       (add-to-move-store store 5 6)
       (prove:is (move-store-count store) 1)
-      (prove:is (get-nth-move store 0) (make-a-move 5 6)))))
+      (prove:is (get-nth-move 0 store) (make-a-move 5 6)))))
 
 (prove:subtest
     "Test do-move-store and contains-move"
@@ -100,10 +103,10 @@
     (add-to-move-store store 1 2)
     (add-to-move-store store 3 4)
     
-    (prove:ok (not (get-nth-move store -1)))
-    (prove:ok (not (get-nth-move store 10)))
-    (prove:ok (not (get-nth-move nil 0)))
-    (prove:is (get-nth-move store 1) (make-a-move 3 4))))
+    (prove:ok (not (get-nth-move -1 store)))
+    (prove:ok (not (get-nth-move 10 store)))
+    (prove:ok (not (get-nth-move 0 nil)))
+    (prove:is (get-nth-move 1 store) (make-a-move 3 4))))
 
 (prove:subtest
     "Test mapcar-move-store"

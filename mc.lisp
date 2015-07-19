@@ -1,3 +1,6 @@
+(defparameter *ucb-max* 99999)
+(defparameter *ucb-min* -99999)
+
 (defun sim-to-game-end (game fn-make-policy prob-store)
   (if (is-game-end game)
       game
@@ -23,7 +26,7 @@
       (+ (* (/ sum num)
 	    (if (= turn *white*) 1 -1))
 	 (* coef (sqrt (/ (log total-num) num))))
-      99999))
+      *ucb-max*))
 
 (defun init-mc-nodes (game)
   (mapcar-move-store (lambda (move)
@@ -43,7 +46,7 @@
 			   (sum (mc-node-sum node)))
 		       (if (< 0 num)
 			   (/ sum num)
-			   -99999)))
+			   *ucb-min*)))
 		   mc-nodes))
 
 (defun mc-simulate (game fn-make-policy times)

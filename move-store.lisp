@@ -80,13 +80,11 @@
      ,@body
      (free-move-store-to-stack ,stack)))
 
-; TODO: change the order of arguments (to equalize with 'nth')
-; TODO: change from func to the macro
-(defun get-nth-move (store n)
-  (cond ((null store) nil)
-	((< n 0) nil)
-	((>= n (move-store-count store)) nil)
-	(t (aref (move-store-moves store) n))))
+(defmacro get-nth-move (n store)
+  `(cond ((null ,store) nil)
+	 ((< ,n 0) nil)
+	 ((>= ,n (move-store-count ,store)) nil)
+	 (t (aref (move-store-moves ,store) ,n))))
 
 (defun mapcar-move-store (fn store)
   (let ((lst nil))

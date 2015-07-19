@@ -154,7 +154,7 @@
 					     (handler-case
 						 (player-set-param plyr k
 								   (read-from-string str))
-					       (simple-error (e) nil)))))
+					       (simple-error (e) (declare (ignore e)) nil)))))
 				stream))
 	   (player-params plyr))
   plyr)

@@ -18,7 +18,7 @@
       (test-ok '(move -1 1) nil)
       (test-ok '(move "ab" 1) nil)
       (let* ((game (make-nth-test-game 11))
-	     (move (get-nth-move (make-moves game) 0)))
+	     (move (get-nth-move 0 (make-moves game))))
 	(test-ok (list 'move (car move) (cdr move)) t game)
 	(prove:is (get-game-depth game) 12)
 	; We doesn't elaborate the search for an invalid move
