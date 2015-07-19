@@ -19,16 +19,17 @@
   (prove:ok (not (is-in-board 3 nil))))
 
 (prove:subtest
-    "Test get-next-cell"
-  (prove:is (get-next-cell 1 2 *dir-down*)  '(1 . 3))
-  (prove:is (get-next-cell 1 2 *dir-up*)    '(1 . 1))
-  (prove:is (get-next-cell 1 2 *dir-right*) '(2 . 2))
-  (prove:is (get-next-cell 1 2 *dir-left*)  '(0 . 2))
-  (prove:is (get-next-cell 1 2 *dir-right-up*)   '(2 . 1))
-  (prove:is (get-next-cell 1 2 *dir-right-down*) '(2 . 3))
-  (prove:is (get-next-cell 1 2 *dir-left-up*)    '(0 . 1))
-  (prove:is (get-next-cell 1 2 *dir-left-down*)  '(0 . 3))
-  (prove:ok (not (get-next-cell 7 2 *dir-right*))))
+    "Test get-next-x, y"
+  (labels ((get-next-cell (x y dir)
+	     (cons (get-next-x x dir) (get-next-y y dir))))
+    (prove:is (get-next-cell 1 2 *dir-down*)  '(1 . 3))
+    (prove:is (get-next-cell 1 2 *dir-up*)    '(1 . 1))
+    (prove:is (get-next-cell 1 2 *dir-right*) '(2 . 2))
+    (prove:is (get-next-cell 1 2 *dir-left*)  '(0 . 2))
+    (prove:is (get-next-cell 1 2 *dir-right-up*)   '(2 . 1))
+    (prove:is (get-next-cell 1 2 *dir-right-down*) '(2 . 3))
+    (prove:is (get-next-cell 1 2 *dir-left-up*)    '(0 . 1))
+    (prove:is (get-next-cell 1 2 *dir-left-down*)  '(0 . 3))))
 
 (defparameter *test-board* (init-board))
 

@@ -6,9 +6,6 @@
   (setf (cdr move) y)
   move)
 
-(defun add-move (moves x y)
-  (cons (make-a-move x y) moves))
-
 (defmacro move-x (move)
   `(car ,move))
 (defmacro move-y (move)

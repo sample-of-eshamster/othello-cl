@@ -22,11 +22,6 @@
   (if (is-down-dir dir) (incf y))
   y)
 
-(defun get-next-cell (x y dir)
-  (setf x (get-next-x x dir))
-  (setf y (get-next-y y dir))
-  (if (is-in-board x y) (cons x y) nil))
-
 (defun set-to-board(board x y piece)
   (let ((pnt (+ (* x *board-size*) y)))
 	(setf (aref board pnt) piece))

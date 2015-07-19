@@ -11,11 +11,6 @@
     (prove:is move (make-a-move 3 4))))
 
 (prove:subtest
-    "Test add-move"
-  (let ((moves (list (make-a-move 1 2))))
-    (prove:is (add-move moves 2 3) `(,(make-a-move 2 3) ,(make-a-move 1 2)))))
-
-(prove:subtest
     "Test getter (move-x, move-y)"
   (let ((move (make-a-move 1 2)))
     (prove:is (move-x move) 1)
